@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+       
+        <h2 class="name">Book Swap</h2>
+        <nav class="navigation">
+            <a href="">Admin</a>
+            <a href="">About</a>
+            <a href="">Contact</a>
+        </nav>
+    </header>
+    <div class="wrapper">
+        <span class="icon-close">
+            <ion-icon name="close"></ion-icon>
+        </span>
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="eye"></ion-icon></span>
+                    <input type="password" required>
+                    <span class="icon"><ion-icon name="eye"></ion-icon></span> 
+                    <label>Password</label>
+                </div>
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox">
+                        Remeber me
+                    </label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <div class="login-register">
+                    <p>Don't have an account?
+                        <a href="#" class="register-link">Register</a></p>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person"></ion-icon></span>
+                    <input type="text" name="username" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="eye"></ion-icon></span>
+                    <input type="password" required>
+                    <span class="icon"><ion-icon name="eye"></ion-icon></span> 
+                   
+                    <label>Password</label>
+                </div>
+                <div class="remember-forgot">
+                    <label>
+                        <input type="checkbox">
+                        I agree to the  1terms & conditions
+                    </label>
+                    
+                </div>
+                <button type="submit" class="btn">Register</button>
+                <div class="login-register">
+                    <p>Already have an account?
+                        <a href="#" class="login-link">Login</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box forgot">
+            <h2>Forgot Password</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+                <p class="forgot-instructions">
+                    Enter your email address, and we will send you a link to reset your password.
+                </p>
+                <button type="submit" class="btn">Submit</button>
+                <div class="login-register">
+                    <p>Remembered your password?
+                        <a href="#" class="login-link">Login</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <div class="loading-screen" id="loadingScreen" style="display: none;">
+            <div class="spinner"></div>
+            <p>Loading...</p>
+        </div>
+        
+        
+    </div>
+
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js"></script>
+    <script type="module" src="register.js" defer></script>
+    <script>
+      /*  const wrapper = document.querySelector('.wrapper');
+        const loginLink = document.querySelector('.login-link')
+        const registerLink = document.querySelector('.register-link')
+        const btnPopup = document.querySelector('.btnlogin-popup')
+        const iconClose = document.querySelector('.icon-close')
+        const registerForm = document.querySelector('.form-box.register form');
+        const loginForm = document.querySelector('.form-box.login form');
+        const forgotLink = document.querySelector('.remember-forgot a');
+        const forgotFormWrapper = document.querySelector('.wrapper');
+        const loginLinkForgot = document.querySelector('.forgot .login-link'); 
+
+
+        registerLink.addEventListener('click',() => {
+            wrapper.classList.add('active');
+        })
+
+        loginLink.addEventListener('click',() => {
+            wrapper.classList.remove('active');
+        })
+
+
+
+        forgotLink.addEventListener('click', () => {
+     forgotFormWrapper.classList.add('active-forgot');
+     wrapper.classList.remove('active');     
+     
+        });
+
+    loginLink.addEventListener('click', () => {
+    forgotFormWrapper.classList.remove('active-forgot');
+    forgotFormWrapper.classList.remove('active'); 
+    });
+
+    registerLink.addEventListener('click', () => {
+    forgotFormWrapper.classList.add('active');
+    forgotFormWrapper.classList.remove('active-forgot');
+    });
+       
+    loginLinkForgot.addEventListener('click', () => {
+    forgotFormWrapper.classList.remove('active-forgot'); 
+    forgotFormWrapper.classList.remove('active'); 
+    //forgotFormWrapper.classList.add('active');
+    loginForm.reset();
+});
+
+    
+        btnPopup.addEventListener('click',() => {
+            wrapper.classList.add('active-popup');
+            wrapper.classList.remove('active-forgot');  
+            wrapper.classList.remove('active');
+        })
+
+        iconClose.addEventListener('click',() => {
+            wrapper.classList.remove('active-popup');
+            registerForm.reset();
+            loginForm.reset();
+            
+        })
+
+*/
+const wrapper = document.querySelector('.wrapper');
+const loginLink = document.querySelectorAll('.login-link'); // Use querySelectorAll for multiple occurrences
+const registerLink = document.querySelector('.register-link');
+const btnPopup = document.querySelector('.btnlogin-popup');
+const iconClose = document.querySelector('.icon-close');
+const registerForm = document.querySelector('.form-box.register form');
+const loginForm = document.querySelector('.form-box.login form');
+const forgotLink = document.querySelector('.remember-forgot a');
+const forgotFormWrapper = document.querySelector('.wrapper');
+const loginLinkForgot = document.querySelector('.forgot .login-link');
+
+// Show login form by default on page load
+document.addEventListener('DOMContentLoaded', () => {
+    wrapper.classList.add('active-popup'); // Ensures login form is open
+    wrapper.classList.remove('active');
+    wrapper.classList.remove('active-forgot');
+});
+
+// Open Register form
+registerLink.addEventListener('click', () => {
+    wrapper.classList.add('active'); // Switch to register form
+    wrapper.classList.remove('active-forgot');
+});
+
+// Open Login form from Register or Forgot Password
+loginLink.forEach(link => {
+    link.addEventListener('click', () => {
+        wrapper.classList.remove('active'); // Switch to login form
+        wrapper.classList.remove('active-forgot');
+        loginForm.reset(); // Reset login form fields
+    });
+});
+
+// Open Forgot Password form
+forgotLink.addEventListener('click', () => {
+    wrapper.classList.add('active-forgot'); // Switch to forgot password
+    wrapper.classList.remove('active');
+});
+
+// Close popup and reset forms
+iconClose.addEventListener('click', () => {
+    wrapper.classList.remove('active-popup'); // Close popup
+    wrapper.classList.remove('active');
+    wrapper.classList.remove('active-forgot');
+    registerForm.reset(); // Reset registration form fields
+    loginForm.reset(); // Reset login form fields
+});
+
+
+        
+    </script>
+</body>
+</html>

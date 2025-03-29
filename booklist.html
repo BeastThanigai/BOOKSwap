@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Exchange - Book Listing</title>
+    <style>
+       
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        .book-item {
+            display: flex;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-image {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .book-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        .book-details {
+            flex: 2;
+            padding-left: 20px;
+        }
+
+        .book-details h3 {
+            margin: 0 0 10px;
+            color: #302626;
+        }
+
+        .book-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .book-actions {
+            margin-top: 10px;
+        }
+
+        .book-actions button{
+            display: inline-block;
+            padding: 10px 15px;
+            margin-right: 10px;
+            font-size: 14px;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .wishlist-btn {
+            background-color: #4caf50;
+        }
+
+        .wishlist-btn:hover {
+            background-color: #45a049;
+        }
+
+        .exchange-btn {
+            background-color: #2196f3;
+        }
+
+        .exchange-btn:hover {
+            background-color: #1976d2;
+        }
+
+        .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    padding: 30px;
+    color: #fff;
+    text-align: center;
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+    color: #333;
+    transition: transform 0.3s ease;
+}
+
+.popup-content:hover {
+    transform: scale(1.02);
+}
+
+.close-popup {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-popup:hover {
+    color: crimson;
+}
+
+.popup-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    animation: slideInOut 3s ease forwards;
+}
+
+.popup-icon {
+    margin-right: 15px;
+    font-size: 24px;
+}
+
+@keyframes slideInOut {
+    0% {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+    }
+    10% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    90% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(-100px);
+        opacity: 0;
+    }
+}
+
+.view-more {
+    background-color: #ffa500;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.view-more:hover {
+    background-color: #ff8c00;
+    transform: translateY(-3px);
+}
+.book-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.report-btn, .review-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Report Button - Red */
+.report-btn {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.report-btn:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+
+/* Review Button - Blue */
+.review-btn {
+    background-color: #007BFF;
+    color: white;
+}
+
+.review-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Centered Popup Styling */
+.review-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    z-index: 1000;
+    width: 350px;
+    text-align: center;
+}
+
+/* Close Button */
+.review-popup button {
+    margin: 10px 5px;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.review-popup button:first-of-type {
+    background-color: #007bff;
+    color: white;
+}
+
+.review-popup button:last-of-type {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Star Rating Styling */
+.star-rating {
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+    font-size: 24px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #ccc;
+    padding: 5px;
+    font-size: 30px;
+}
+
+.star-rating input:checked ~ label {
+    color: gold;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: gold;
+}
+
+
+    </style>
+</head>
+<body>
+    <h1>Available Books</h1>
+    <div class="book-list" id="bookList"></div>
+
+    <div id="viewMorePopup" style="display: none;" class="popup">
+        <div class="popup-content">
+            <span class="close-popup" onclick="closePopup()">&times;</span>
+            <div id="bookDetails"></div>
+        </div>
+    </div>
+    
+ 
+   <script type="module">
+  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, set, get, onValue, push, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    import { addNotification } from "./notification.js";
+
+
+ 
+    const firebaseConfig = {
+        apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+        authDomain: "bookexc.firebaseapp.com",
+        databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+        projectId: "bookexc",
+        storageBucket: "bookexc.appspot.com",
+        messagingSenderId: "688636268839",
+        appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+        measurementId: "G-8TZ99T5M1L"
+    };
+
+   
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+   
+
+
+const params = new URLSearchParams(window.location.search);
+const userId = params.get("userid");
+let searchQuery = params.get("search")?.toLowerCase() || "";
+const previousPage = params.get("prev") || "home.html";
+const showBack = params.get("showBack") === "true";
+
+if (!userId) {
+    alert("User ID not found in the URL. Please log in again.");
+}
+
+const bookList = document.getElementById("bookList");
+const booksRef = ref(db, "books");
+
+onValue(booksRef, (snapshot) => {
+    bookList.innerHTML = "";
+
+    if (snapshot.exists()) {
+        let bookArray = Object.entries(snapshot.val()).map(([id, book]) => ({ id, ...book }));
+
+        bookArray = bookArray.filter(book => book.userid !== userId);
+
+        if (searchQuery) {
+            bookArray = bookArray.filter(book =>
+                book.title?.toLowerCase().includes(searchQuery) ||
+                book.author?.toLowerCase().includes(searchQuery) ||
+                book.genre?.toLowerCase().includes(searchQuery)
+            );
+        }
+
+        if (bookArray.length === 0) {
+            bookList.innerHTML = "<p>No books available at the moment.</p>";
+            return;
+        }
+
+        bookArray.sort((a, b) => a.title.localeCompare(b.title));
+
+        if (showBack) {
+            const backButton = document.createElement("button");
+            backButton.textContent = "Back";
+            backButton.className = "back-btn";
+            backButton.style.position = "fixed";
+            backButton.style.bottom = "20px";
+            backButton.style.left = "50%";
+            backButton.style.transform = "translateX(-50%)";
+            backButton.style.padding = "10px 20px";
+            backButton.style.backgroundColor = "#007BFF";
+            backButton.style.color = "#fff";
+            backButton.style.border = "none";
+            backButton.style.borderRadius = "5px";
+            backButton.style.cursor = "pointer";
+            backButton.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.2)";
+            backButton.onmouseenter = () => backButton.style.backgroundColor = "#0056b3";
+            backButton.onmouseleave = () => backButton.style.backgroundColor = "#007BFF";
+
+            backButton.onclick = () => {
+            window.history.back();
+};
+
+            bookList.appendChild(backButton);
+        }
+
+        bookArray.forEach(book => {
+            const bookItem = document.createElement("div");
+            bookItem.className = "book-item";
+            const imageUrl = book.image?.startsWith("data:image/") ? book.image : "imageBook/book7.jpg";
+            bookItem.innerHTML = `
+                <div class="book-image">
+                    <img src="${imageUrl}" alt="${book.title}" onerror="this.src='imageBook/book7.jpg';">
+                </div>
+                <div class="book-details">
+                    <h3>${book.title}</h3>
+                    <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
+                    <p><strong>Genre:</strong> ${book.genre || "Not Specified"}</p>
+                    <p><strong>Average Rating:</strong> ${book.averageRating || 0} ⭐</p>
+                    <div class="book-actions">
+                        <button onclick='showBookDetails(${JSON.stringify(book)})' class="view-more">View More</button>
+                        <button class="wishlist-btn" onclick="addToWishlist('${book.id}')">Add to Wishlist</button>
+                        <button class="exchange-btn" onclick="requestExchange('${book.id}', '${book.userid}', '${userId}')">Exchange Request</button>
+                         <button class="report-btn" onclick="reportBook('${book.id}')">Report</button>
+                        <button class="review-btn" onclick="openReviewPopup('${book.id}')">Review</button>
+                   
+                    </div>
+                </div>`;
+            bookList.appendChild(bookItem);
+        });
+    } else {
+        bookList.innerHTML = "<p>No books available at the moment.</p>";
+    }
+});
+
+function applyBookSearchFilter(query) {
+    searchQuery = query.toLowerCase();
+    const event = new Event('searchUpdated');
+    window.dispatchEvent(event);
+}
+
+window.addEventListener('searchUpdated', () => {
+    const filteredBooks = Array.from(document.querySelectorAll('.book-item'));
+    filteredBooks.forEach(item => {
+        const title = item.querySelector('.book-details h3').innerText.toLowerCase();
+        const author = item.querySelector('.book-details p:nth-child(2)').innerText.toLowerCase();
+        const genre = item.querySelector('.book-details p:nth-child(3)').innerText.toLowerCase();
+        const isVisible = title.includes(searchQuery) || author.includes(searchQuery) || genre.includes(searchQuery);
+        item.style.display = isVisible ? 'block' : 'none';
+    });
+});
+
+
+window.reportBook = function(bookId) {
+    const booksRef = ref(db, "books");  // Reference to all books
+
+    // Find the book by its bookId inside the child nodes
+    get(booksRef).then(snapshot => {
+        if (snapshot.exists()) {
+            let booksData = snapshot.val();
+            let bookKey = null;  // Store the Firebase key for the book
+
+            // Loop through books to find the matching bookId
+            Object.keys(booksData).forEach(key => {
+                if (booksData[key].id === bookId) {
+                    bookKey = key;
+                }
+            });
+
+            if (!bookKey) {
+                console.error("Book not found in database. Check if the ID is correct:", bookId);
+                showErrorPopup("Book not found!");
+                return;
+            }
+
+            const bookRef = ref(db, `books/${bookKey}`);  // Correct Firebase key reference
+            let bookData = booksData[bookKey];
+            let currentCount = bookData.reportCount || 0;
+            let reportedBy = bookData.reportedBy || []; // Ensure array exists
+
+            if (reportedBy.includes(userId)) {
+                showErrorPopup("You have already reported this book. Action will be taken if multiple users report.");
+                return;
+            }
+
+            // Update report count and add user to reportedBy array
+            reportedBy.push(userId);
+            update(bookRef, { reportCount: currentCount + 1, reportedBy })
+                .then(() => showSuccessPopup("Book reported successfully!"))
+                .catch(error => showErrorPopup("Error reporting book: " + error.message));
+        } else {
+            console.error("Books list not found in database.");
+            showErrorPopup("Error fetching books data.");
+        }
+    }).catch(error => {
+        console.error("Error fetching book details:", error);
+        showErrorPopup("Error fetching book details: " + error.message);
+    });
+};
+
+
+// ✅ Open Review Popup
+window.openReviewPopup = function (bookId) {
+    const reviewPopup = document.createElement("div");
+    reviewPopup.className = "review-popup";
+    reviewPopup.innerHTML = `
+        <div class="review-content">
+            <h3>Leave a Review</h3>
+            <div class="star-rating">
+                <input type="radio" name="rating" id="star5" value="5"><label for="star5">★</label>
+                <input type="radio" name="rating" id="star4" value="4"><label for="star4">★</label>
+                <input type="radio" name="rating" id="star3" value="3"><label for="star3">★</label>
+                <input type="radio" name="rating" id="star2" value="2"><label for="star2">★</label>
+                <input type="radio" name="rating" id="star1" value="1"><label for="star1">★</label>
+            </div>
+            <textarea id="reviewText" placeholder="Write your review (optional)"></textarea>
+            <button onclick="submitReview('${bookId}')">Submit</button>
+            <button onclick="closeReviewPopup()">Cancel</button>
+        </div>
+    `;
+    document.body.appendChild(reviewPopup);
+}
+window.submitReview = function (bookId) {
+    const reviewRating = document.querySelector('input[name="rating"]:checked')?.value;
+    const reviewText = document.getElementById('reviewText').value.trim();
+
+
+    if (!reviewRating) {
+        showErrorPopup("Please select a rating before submitting.");
+        return;
+    }
+
+    // Reference to the user's profile in the database
+    const userProfileRef = ref(db, `profiles/${userId}`);
+
+    get(userProfileRef).then((userProfileSnapshot) => {
+        if (!userProfileSnapshot.exists()) {
+            showErrorPopup("User profile not found.");
+            return;
+        }
+
+        const userName = userProfileSnapshot.val().name;
+
+        // Reference to the exchange_requests node
+        const exchangesRef = ref(db, 'exchange_requests');
+
+        get(exchangesRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                let hasExchanged = false;
+                const exchanges = snapshot.val();
+
+                // Iterate through each exchange request
+                for (const exchangeKey in exchanges) {
+                    const exchange = exchanges[exchangeKey];
+
+                    // Check if the exchange was requested by the current user and has been accepted
+                    if (exchange.requestedBy === userName && exchange.status === "accepted") {
+                        const bookDocId = exchange.bookRequested;
+                        const bookRef = ref(db, `books/${bookDocId}`);
+
+                        // Fetch the book details
+                        get(bookRef).then((bookSnapshot) => {
+                            if (bookSnapshot.exists()) {
+                                const book = bookSnapshot.val();
+                                if (book.id === bookId) {
+                                    hasExchanged = true;
+                                    // Proceed to submit the review
+                                   submitReviewToDatabase(bookId, reviewRating, reviewText);
+                                }
+                            }
+                        }).catch((error) => {
+                            console.error("Error fetching book details:", error);
+                            showErrorPopup("Failed to fetch book details.");
+                        });
+
+                        if (hasExchanged) break;
+                    }
+                }
+
+                if (!hasExchanged) {
+                    showErrorPopup("You can only review books you have exchanged.");
+                }
+            } else {
+                showErrorPopup("No exchange records found.");
+            }
+        }).catch((error) => {
+            console.error("Error checking exchange records:", error);
+            showErrorPopup("Failed to verify exchange status.");
+        });
+    }).catch((error) => {
+        console.error("Error fetching user profile:", error);
+        showErrorPopup("Failed to retrieve user information.");
+    });
+};
+window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {
+    const booksRef = ref(db, "books"); // Reference to all books
+
+    // Validate reviewRating
+    const rating = parseFloat(reviewRating);
+    if (isNaN(rating) || rating < 0) {
+        showErrorPopup("Invalid rating value.");
+        return;
+    }
+
+    // Ensure userId is defined
+    if (!userId) {
+        showErrorPopup("User not identified. Please log in.");
+        return;
+    }
+
+    // Find the book by its bookId inside the child nodes
+    get(booksRef).then(snapshot => {
+        if (snapshot.exists()) {
+            const booksData = snapshot.val();
+            let bookKey = null; // Store the Firebase key for the book
+
+            // Loop through books to find the matching bookId
+            Object.keys(booksData).forEach(key => {
+                if (booksData[key].id === bookId) {
+                    bookKey = key;
+                }
+            });
+
+            if (!bookKey) {
+                console.error("Book not found in database. Check if the ID is correct:", bookId);
+                showErrorPopup("Book not found!");
+                return;
+            }
+
+            const bookRef = ref(db, `books/${bookKey}`); // Correct Firebase key reference
+            const bookData = booksData[bookKey];
+            const reviews = bookData.reviews || {};
+            reviews[userId] = {
+                rating: rating,
+                text: reviewText
+            };
+
+            // Calculate the new average rating
+            const validRatings = Object.values(reviews)
+                .map(review => parseFloat(review.rating))
+                .filter(rating => !isNaN(rating));
+
+            const totalRating = validRatings.reduce((sum, rating) => sum + rating, 0);
+            const reviewCount = validRatings.length;
+            const avgRating = reviewCount > 0 ? totalRating / reviewCount : 0;
+
+            // Update the book's reviews and averageRating
+            update(bookRef, {
+                reviews: reviews,
+                averageRating: avgRating
+            }).then(() => {
+                showSuccessPopup("Review submitted successfully!");
+                closeReviewPopup();
+            }).catch((error) => {
+                showErrorPopup("Error updating review: " + error.message);
+            });
+        } else {
+            console.error("Books list not found in database.");
+            showErrorPopup("Error fetching books data.");
+        }
+    }).catch(error => {
+        console.error("Error fetching book details:", error);
+        showErrorPopup("Error fetching book details: " + error.message);
+    });
+};
+
+
+
+
+// ✅ Close Review Popup & Return
+window.closeReviewPopup = function () {
+    document.querySelector(".review-popup").remove();
+}
+
+
+window.showBookDetails = function (book) {
+    const popup = document.getElementById("viewMorePopup");
+    const details = document.getElementById("bookDetails");
+
+    details.innerHTML = `
+        <strong>Title:</strong> ${book.title || "N/A"}<br>
+        <strong>Author:</strong> ${book.author || "N/A"}<br>
+        <strong>Genre:</strong> ${book.genre || "N/A"}<br>
+        <strong>Description:</strong> ${book.description || "No description available"}<br>
+        <strong>Condition:</strong> ${book.condition || "N/A"}<br>
+        <strong>Status:</strong> ${book.status || "N/A"}
+   ` ;
+
+    popup.style.display = "flex";
+};
+
+
+window.closePopup = function () {
+    document.getElementById("viewMorePopup").style.display = "none";
+};
+
+
+window.addToWishlist = function (bookId) {
+    if (!userId) {
+        alert("User ID is missing. Please log in again.");
+        return;
+    }
+
+   
+    const bookWishlistRef = ref(db, `wishlist/${userId}/${bookId}`);
+
+    
+    onValue(booksRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const books = snapshot.val();
+            const book = Object.values(books).find((b) => b.id === bookId);
+
+            if (!book) {
+                showErrorPopup("Book not found. Please try again.");
+                return;
+            }
+
+            // Check if the book already exists in the wishlist
+            get(bookWishlistRef).then((wishlistSnapshot) => {
+                if (wishlistSnapshot.exists()) {
+                    showInfoPopup("This book is already in your wishlist!");
+                } else {
+                    
+                    set(bookWishlistRef, {
+                        userId: userId,
+                        bookId: book.id,
+                        title: book.title,
+                        author: book.author || "Unknown",
+                        genre: book.genre || "Not Specified",
+                        condition: book.condition || "N/A",
+                        description: book.description || "No description available",
+                        image: book.image || null,
+                        status: book.status || "Unknown",
+                        addedOn: new Date().toISOString(),
+                    })
+                        .then(() => {
+                            showSuccessPopup(`"${book.title}" added to your wishlist!`);
+                        })
+                        .catch((error) => {
+                            console.error("Error adding to wishlist:", error);
+                            showErrorPopup("Failed to add to wishlist. Please try again.");
+                        });
+                }
+            }).catch((error) => {
+                console.error("Error checking wishlist:", error);
+                showErrorPopup("Error checking the wishlist. Please try again.");
+            });
+        } else {
+            showErrorPopup("No books available to add to the wishlist.");
+        }
+    }, { onlyOnce: true });
+};
+
+
+
+function showSuccessPopup(message) {
+    createPopup(message, "#4CAF50", "✅");
+}
+
+
+function showInfoPopup(message) {
+    createPopup(message, "#2196F3", "ℹ️"); 
+}
+
+
+function showErrorPopup(message) {
+    createPopup(message, "#F44336", "❌"); 
+}
+
+
+function createPopup(message, backgroundColor, icon) {
+    const popup = document.createElement("div");
+    popup.className = "popup-message";
+    popup.style.backgroundColor = backgroundColor;
+
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "popup-icon";
+    iconSpan.innerText = icon;
+
+    const messageSpan = document.createElement("span");
+    messageSpan.className = "popup-text";
+    messageSpan.innerText = message;
+
+    popup.appendChild(iconSpan);
+    popup.appendChild(messageSpan);
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+        popup.remove();
+    }, 3000);
+}
+
+
+window.requestExchange = function (bookID, ownerID, userId) {
+    if (!userId) {
+        alert("You must be logged in to request an exchange.");
+        return;
+    }
+
+    if (ownerID === userId) {
+        alert("You cannot exchange your own book.");
+        return;
+    }
+
+    console.log("Requesting exchange for bookID:", bookID);
+
+    const booksRef = ref(db, "books");
+
+    get(booksRef)
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const books = snapshot.val();
+                let foundBook = null;
+
+                for (const key in books) {
+                    if (books[key].id === bookID) {
+                        foundBook = { key, ...books[key] };
+                        break;
+                    }
+                }
+
+                if (foundBook) {
+                    console.log(`Exchange Request for: ${foundBook.title}, Status: ${foundBook.status}`);
+
+                    if (!foundBook.status || foundBook.status.toLowerCase() !== "available") {
+                        alert(`Sorry, "${foundBook.title}" is currently unavailable for exchange.`);
+                        return;
+                    }
+
+                    const requestID = generateUniqueID();
+
+                    Promise.all([
+                        get(ref(db, `profiles/${userId}`)),
+                        get(ref(db, `profiles/${ownerID}`))
+                    ]).then(([requestedBySnap, requestedToSnap]) => {
+                        if (!requestedBySnap.exists() || !requestedToSnap.exists()) {
+                            alert("User profiles not found.");
+                            return;
+                        }
+
+                        const requestedByProfile = requestedBySnap.val();
+                        const requestedToProfile = requestedToSnap.val();
+
+                        const exchangeRef = ref(db, `exchange_requests/${requestID}`);
+
+                        set(exchangeRef, {
+                            requestID: requestID,
+                            requestedBy: requestedByProfile.name,
+                            bookRequested: foundBook.key,  // This is the bookId
+                            requestedTo: requestedToProfile.name,
+                            status: "pending",
+                            bookHandover: "pending",
+                            bookReturn: "pending",
+                            timestamp: Date.now()
+                        })
+                            .then(() => {
+                                alert(`Exchange request for "${foundBook.title}" sent successfully!`);
+
+                               
+                                const notificationMessage = `${requestedByProfile.name} requested an exchange for "${foundBook.title}".`;
+                                addNotification(ownerID, userId, foundBook.key, notificationMessage);
+
+                            });
+                    });
+                } else {
+                    alert("Book not found.");
+                }
+            } else {
+                alert("No books available.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching books:", error);
+        });
+};
+
+
+                     
+
+function generateUniqueID() {
+    return "req_" + Math.random().toString(36).substr(2, 9);
+}
+
+
+
+
+</script>
+
+</body>
+</html>

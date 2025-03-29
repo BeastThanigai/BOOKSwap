@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner's Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        #pending-returns {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .return-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .return-item:last-child {
+            border-bottom: none;
+        }
+        .return-item h3 {
+            margin: 0 0 10px;
+        }
+        .return-item p {
+            margin: 5px 0;
+        }
+        .return-item button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .return-item button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pending return confirmation</h1>
+    <div id="pending-returns">
+        <p>Loading pending returns...</p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+        import { getDatabase, ref, query, orderByChild, equalTo, get, update } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
+
+        const firebaseConfig = {
+        apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+        authDomain: "bookexc.firebaseapp.com",
+        databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+        projectId: "bookexc",
+        storageBucket: "bookexc.appspot.com",
+        messagingSenderId: "688636268839",
+        appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+        measurementId: "G-8TZ99T5M1L"
+    };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+      /*  const params = new URLSearchParams(window.location.search);
+        const userId = params.get("userid");
+
+        if (!userId) {
+    alert("User ID not found in the URL. Please log in again.");
+}
+
+        // Function to load pending return confirmations
+        async function loadPendingReturns() {
+            const pendingReturnsContainer = document.getElementById('pending-returns');
+            pendingReturnsContainer.innerHTML = '<p>Loading pending returns...</p>';
+
+            try {
+                // Fetch owner's profile to get the owner's name
+                const ownerProfileRef = ref(db, `profiles/${userId}`);
+                const ownerProfileSnap = await get(ownerProfileRef);
+                if (!ownerProfileSnap.exists()) {
+                    pendingReturnsContainer.innerHTML = '<p>Owner profile not found.</p>';
+                    return;
+                }
+                const ownerName = ownerProfileSnap.val().name;
+
+                // Query exchange requests where requestedTo is the owner and bookReturn status is 'requested'
+                const exchangeRequestsRef = ref(db, 'exchange_requests');
+                const exchangeRequestsQuery = query(exchangeRequestsRef, orderByChild('requestedTo'), equalTo(ownerName));
+                const exchangeRequestsSnap = await get(exchangeRequestsQuery);
+
+                if (!exchangeRequestsSnap.exists()) {
+                    pendingReturnsContainer.innerHTML = '<p>No pending return confirmations.</p>';
+                    return;
+                }
+
+                const exchanges = exchangeRequestsSnap.val();
+                const pendingReturns = Object.keys(exchanges).filter(key => exchanges[key].bookReturn === 'Requested');
+
+                if (pendingReturns.length === 0) {
+                    pendingReturnsContainer.innerHTML = '<p>No pending return confirmations.</p>';
+                    return;
+                }
+
+                pendingReturnsContainer.innerHTML = '';
+                pendingReturns.forEach(async (exchangeKey) => {
+                    const exchange = exchanges[exchangeKey];
+                    const bookRef = ref(db, `books/${exchange.bookRequested}`);
+                    const bookSnap = await get(bookRef);
+                    const book = bookSnap.exists() ? bookSnap.val() : { title: 'Unknown Title' };
+
+                    const returnItem = document.createElement('div');
+                    returnItem.className = 'return-item';
+                    returnItem.innerHTML = `
+                        <h3>${book.title}</h3>
+                        <p><strong>Borrower:</strong> ${exchange.requestedBy}</p>
+                        <p><strong>Status:</strong> Return Requested</p>
+                        <button onclick="confirmReturn('${exchangeKey}', '${exchange.bookRequested}')">Confirm Receipt</button>
+                    `;
+                    pendingReturnsContainer.appendChild(returnItem);
+                });
+            } catch (error) {
+                console.error('Error loading pending returns:', error);
+                pendingReturnsContainer.innerHTML = '<p>Error loading pending returns.</p>';
+            }
+        }
+
+        // Function to confirm book return
+        async function confirmReturn(exchangeKey, bookKey) {
+            const exchangeRef = ref(db, `exchange_requests/${exchangeKey}`);
+            const bookRef = ref(db, `books/${bookKey}`);
+
+            try {
+                // Update exchange request status to 'completed' and bookReturn to 'returned'
+                await update(exchangeRef, {
+                    status: 'completed',
+                    bookReturn: 'returned'
+                });
+
+                // Update book status to 'available'
+                await update(bookRef, {
+                    status: 'available'
+                });
+
+                alert('Book return confirmed successfully.');
+                loadPendingReturns(); // Refresh the list
+            } catch (error) {
+                console.error('Error confirming book return:', error);
+                alert('Failed to confirm book return. Please try again.');
+            }
+        }
+
+        // Load pending returns on page load
+        loadPendingReturns();
+
+        // Expose confirmReturn function to the global scope
+        window.confirmReturn = confirmReturn;*/
+        
+        const params = new URLSearchParams(window.location.search);
+const userId = params.get("userid");
+
+if (!userId) {
+    alert("User ID not found in the URL. Please log in again.");
+}
+
+// Function to load all lent books and prioritize those with return requests
+async function loadLentBooks() {
+    const lentBooksContainer = document.getElementById('pending-returns');
+    lentBooksContainer.innerHTML = '<p>Loading lent books...</p>';
+
+    try {
+        // Fetch owner's profile to get the owner's name
+        const ownerProfileRef = ref(db, `profiles/${userId}`);
+        const ownerProfileSnap = await get(ownerProfileRef);
+        if (!ownerProfileSnap.exists()) {
+            lentBooksContainer.innerHTML = '<p>Owner profile not found.</p>';
+            return;
+        }
+        const ownerName = ownerProfileSnap.val().name;
+
+        // Query exchange requests where requestedTo is the owner
+        const exchangeRequestsRef = ref(db, 'exchange_requests');
+        const exchangeRequestsQuery = query(exchangeRequestsRef, orderByChild('requestedTo'), equalTo(ownerName));
+        const exchangeRequestsSnap = await get(exchangeRequestsQuery);
+
+        if (!exchangeRequestsSnap.exists()) {
+            lentBooksContainer.innerHTML = '<p>No lent books found.</p>';
+            return;
+        }
+
+        const exchanges = exchangeRequestsSnap.val();
+        const lentBooks = Object.keys(exchanges)
+            .map(key => ({ key, ...exchanges[key] }))
+            .filter(exchange => exchange.bookReturn !== 'returned'); // Exclude returned books
+
+        // Sort: prioritize books with return requests
+        lentBooks.sort((a, b) => {
+            if (a.bookReturn === 'Requested' && b.bookReturn !== 'Requested') return -1;
+            if (a.bookReturn !== 'Requested' && b.bookReturn === 'Requested') return 1;
+            return 0;
+        });
+
+        lentBooksContainer.innerHTML = '';
+        lentBooks.forEach(async (exchange) => {
+            const bookRef = ref(db, `books/${exchange.bookRequested}`);
+            const bookSnap = await get(bookRef);
+            const book = bookSnap.exists() ? bookSnap.val() : { title: 'Unknown Title' };
+
+            // Calculate late fee if applicable
+            let lateFee = 0;
+            if (exchange.timestamp) {
+                const dueDate = calculateDueDate(exchange.timestamp);
+
+                const currentDate = new Date();
+                if (currentDate > dueDate) {
+                    const daysLate = Math.floor((currentDate - dueDate) / (1000 * 60 * 60 * 24));
+                    lateFee = calculateLateFee(daysLate);
+                    // Update borrower's profile with the fine
+                    await updateUserFine(exchange.requestedById, exchange.bookRequested, lateFee);
+                }
+            }
+
+            const returnItem = document.createElement('div');
+            returnItem.className = 'return-item';
+            returnItem.innerHTML = `
+                <h3>${book.title}</h3>
+                <p><strong>Borrower:</strong> ${exchange.requestedBy}</p>
+                <p><strong>Status:</strong> ${exchange.bookReturn === 'Requested' ? 'Return Requested' : 'Lent Out'}</p>
+                ${lateFee > 0 ? `<p><strong>Late Fee:</strong> $${lateFee.toFixed(2)}</p>` : ''}
+                ${exchange.bookReturn === 'Requested' ? `<button onclick="confirmReturn('${exchange.key}', '${exchange.bookRequested}')">Confirm Receipt</button>` : ''}
+            `;
+            lentBooksContainer.appendChild(returnItem);
+        });
+    } catch (error) {
+        console.error('Error loading lent books:', error);
+        lentBooksContainer.innerHTML = '<p>Error loading lent books.</p>';
+    }
+}
+
+function calculateDueDate(timestamp) {
+    const borrowDate = new Date(timestamp);
+    const dueDate = new Date(borrowDate);
+    dueDate.setDate(borrowDate.getDate() + 14); // Assuming a 14-day loan period
+    return dueDate;
+}
+
+// Function to calculate late fee based on days late
+function calculateLateFee(daysLate) {
+    const dailyLateFee = 1; // Example: $1 per day late
+    return daysLate * dailyLateFee;
+}
+
+// Function to update user's profile with the calculated fine
+async function updateUserFine(borrowerId, bookId, fineAmount) {
+    const userFinesRef = ref(db, `profiles/${borrowerId}/fines/${bookId}`);
+    await set(userFinesRef, {
+        amount: fineAmount,
+        timestamp: Date.now()
+    });
+}
+
+// Function to confirm book return
+async function confirmReturn(exchangeKey, bookKey) {
+    const exchangeRef = ref(db, `exchange_requests/${exchangeKey}`);
+    const bookRef = ref(db, `books/${bookKey}`);
+
+    try {
+        // Update exchange request status to 'completed' and bookReturn to 'returned'
+        await update(exchangeRef, {
+            status: 'completed',
+            bookReturn: 'returned'
+        });
+
+        // Update book status to 'available'
+        await update(bookRef, {
+            status: 'available'
+        });
+
+        alert('Book return confirmed successfully.');
+        loadLentBooks(); // Refresh the list
+    } catch (error) {
+        console.error('Error confirming book return:', error);
+        alert('Failed to confirm book return. Please try again.');
+    }
+}
+
+// Load lent books on page load
+loadLentBooks();
+
+// Expose confirmReturn function to the global scope
+window.confirmReturn = confirmReturn;
+
+   
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Page</title>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: url("background.jpg") no-repeat center center/cover;
+            background-attachment: fixed;
+        }
+
+        .feedback-container {
+            width: 80%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .feedback-header {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .feedback-item {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 1.5em;
+            cursor: pointer;
+            color: gray;
+            transition: color 0.2s;
+        }
+
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: gold;
+        }
+
+        .feedback-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+            resize: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="feedback-container">
+        <div class="feedback-header">User Feedback</div>
+
+        <form id="feedbackForm">
+     
+            <!-- Question 1 -->
+            <div class="feedback-item">
+                <label>1. How satisfied are you with our platform?</label>
+                <div class="star-rating">
+                    <input type="radio" name="q1" id="q1-star5" value="5"><label for="q1-star5">★</label>
+                    <input type="radio" name="q1" id="q1-star4" value="4"><label for="q1-star4">★</label>
+                    <input type="radio" name="q1" id="q1-star3" value="3"><label for="q1-star3">★</label>
+                    <input type="radio" name="q1" id="q1-star2" value="2"><label for="q1-star2">★</label>
+                    <input type="radio" name="q1" id="q1-star1" value="1"><label for="q1-star1">★</label>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="feedback-item">
+                <label>2. How easy is it to use the features?</label>
+                <div class="star-rating">
+                    <input type="radio" name="q2" id="q2-star5" value="5"><label for="q2-star5">★</label>
+                    <input type="radio" name="q2" id="q2-star4" value="4"><label for="q2-star4">★</label>
+                    <input type="radio" name="q2" id="q2-star3" value="3"><label for="q2-star3">★</label>
+                    <input type="radio" name="q2" id="q2-star2" value="2"><label for="q2-star2">★</label>
+                    <input type="radio" name="q2" id="q2-star1" value="1"><label for="q2-star1">★</label>
+                </div>
+            </div>
+
+            <!-- Overall Rating -->
+            <div class="feedback-item">
+                <label>3. What is your overall rating?</label>
+                <div class="star-rating">
+                    <input type="radio" name="overall" id="overall-star5" value="5"><label for="overall-star5">★</label>
+                    <input type="radio" name="overall" id="overall-star4" value="4"><label for="overall-star4">★</label>
+                    <input type="radio" name="overall" id="overall-star3" value="3"><label for="overall-star3">★</label>
+                    <input type="radio" name="overall" id="overall-star2" value="2"><label for="overall-star2">★</label>
+                    <input type="radio" name="overall" id="overall-star1" value="1"><label for="overall-star1">★</label>
+                </div>
+            </div>
+
+            <!-- Feedback Input -->
+            <textarea class="feedback-input" id="feedbackText" placeholder="Write your feedback..."></textarea>
+
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+  authDomain: "bookexc.firebaseapp.com",
+  projectId: "bookexc",
+  storageBucket: "bookexc.appspot.com",
+  messagingSenderId: "688636268839",
+  appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+  measurementId: "G-8TZ99T5M1L",
+};
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userid'); 
+
+        if (!userId) {
+    alert('User ID not found. Please log in again.');
+        }
+        else {
+            console.log("User ID found:", userId);
+
+        document.getElementById("feedbackForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+           
+            const feedbackText = document.getElementById("feedbackText").value;
+            const ratings = {
+                q1: document.querySelector('input[name="q1"]:checked')?.value || "N/A",
+                q2: document.querySelector('input[name="q2"]:checked')?.value || "N/A",
+                overall: document.querySelector('input[name="overall"]:checked')?.value || "N/A"
+            };
+
+            push(ref(db, "feedbacks"), {
+                userid: userId, 
+                ratings: ratings,
+                feedback: feedbackText,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Feedback submitted successfully!");
+                document.getElementById("feedbackForm").reset();
+            }).catch(error => {
+                alert("Error submitting feedback: " + error.message);
+            });
+        });
+    }
+    </script>
+
+</body>
+</html>

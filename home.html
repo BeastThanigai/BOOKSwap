@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>welcome</title>
+    <style>
+        .dashboard-content {
+          padding: 2rem;
+          text-align: center;
+          background: transparent;
+          backdrop-filter: blur(20px);
+          margin-left: 225px;
+          margin-top: 175px;
+          height: 100%;
+          width: 1000px;
+         
+        }
+      
+        .welcome-section h1 {
+          font-size: 2.5rem;
+          margin-bottom: 1rem;
+          color: black;
+        }
+      
+        .welcome-section p {
+          font-size: 1.2rem;
+          color: black;
+          margin-bottom: 1.5rem;
+        }
+      
+        .browse-books-btn {
+          padding: 0.8rem 1.5rem;
+          font-size: 1rem;
+          color: #fff;
+          background-color: #007bff;
+          border: none;
+          border-radius: 0.5rem;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+      
+        .browse-books-btn:hover {
+          background-color: #0056b3;
+        }
+      </style>
+      
+</head>
+<body>
+    <div class="dashboard-content">
+        <div class="welcome-section">
+          <h1>Welcome to Book Swap</h1>
+          <p>
+            Discover a world of knowledge at your fingertips. Book Swap is your 
+            go-to platform for exploring, exchanging, and sharing books. Whether you're 
+            an good reader or someone looking to expand your library, we've got you covered!
+          </p>
+          <p>
+            Use the tools in our dashboard to manage your wishlist, browse books, and 
+            connect with like-minded book lovers.
+          </p>
+          
+        </div>
+      </div>
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+      import { getDatabase, ref, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-database.js";
+  
+      const firebaseConfig = {
+          apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+          authDomain: "bookexc.firebaseapp.com",
+          databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+          projectId: "bookexc",
+          storageBucket: "bookexc.appspot.com",
+          messagingSenderId: "688636268839",
+          appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+          measurementId: "G-8TZ99T5M1L"
+      };
+  
+      
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get("userid");
+
+       
+      </script>
+      
+</body>
+</html>

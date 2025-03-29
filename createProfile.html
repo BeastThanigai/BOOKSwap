@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            height: 100vh;
+            width: 100%;
+            /* background: linear-gradient(135deg, #6e45e2, #88d3ce);*/
+            background: url("imageBook/book5.jpg") no-repeat;
+    
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+            margin-top: 270px;
+        }
+        .container {
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 25px;
+            font-size: 30px;
+            color: #fff;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            color: #333;
+        }
+        input:focus, textarea:focus, select:focus {
+            border: 2px solid #fff;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #ff6b6b;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 15px;
+        }
+        button:hover {
+            background: #ff4f4f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Profile</h2>
+        <form id="userProfileForm">
+            <div class="input-group">
+                <label for="profileImage">Upload Image:</label>
+                <input type="file" id="profileImage" accept="image/*">
+            </div>
+            <div class="input-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="input-group">
+                <label for="clgname">College Name:</label>
+                <input type="text" id="clgname" required>
+            </div>
+            <div class="input-group">
+                <label for="Course">Course:</label>
+                <select id="Course" required>
+                    <option value="">Select</option>
+                    <option value="MIS">MIS</option>
+                    <option value="CSE">CSE</option>
+                    <option value="EEE">EEE</option>
+                    <option value="ECE">ECE</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Mechanical">Mechanical</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" required>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="age">Age:</label>
+                <input type="number" id="age" required>
+            </div>
+            <div class="input-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone">
+            </div>
+            <div class="input-group">
+                <label for="address">Address:</label>
+                <textarea id="address" rows="3"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="bio">Bio:</label>
+                <textarea id="bio" rows="3"></textarea>
+            </div>
+            <button type="button" onclick="submitUserProfile()">Submit</button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js';
+        import { getDatabase, ref, set, get } from 'https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js';
+       
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+            authDomain: "bookexc.firebaseapp.com",
+            databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+            projectId: "bookexc",
+            storageBucket: "bookexc.appspot.com",
+            messagingSenderId: "688636268839",
+            appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+            measurementId: "G-8TZ99T5M1L"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+       
+
+        window.submitUserProfile = async function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userid');
+            const fileInput = document.getElementById('profileImage');
+            const file = fileInput.files[0];
+            let base64Image = "";
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    base64Image = event.target.result;
+                    saveUserData(userId, base64Image);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveUserData(userId, base64Image);
+            }
+        };
+
+        function saveUserData(userId, base64Image) {
+            const name = document.getElementById('name').value;
+            const clgname = document.getElementById('clgname').value;
+            const course = document.getElementById('Course').value;
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const bio = document.getElementById('bio').value;
+
+            const userRef = ref(db, `profiles/${userId}`);
+            get(ref(db, `users/${userId}`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const { username, email } = snapshot.val();
+                    set(userRef, {
+                        userId: userId,
+                        name:name,
+                        username: username,
+                        email: email,
+                        clgname: clgname,
+                        course: course,
+                        gender: gender,
+                        age: age,
+                        phone: phone,
+                        address: address,
+                        bio: bio,
+                        profileImage: base64Image
+                    }).then(() => {
+                        alert('Profile created successfully!');
+                        window.location.href = `db2.html?userid=${userId}`;
+                    }).catch(error => {
+                        console.error('Error creating profile:', error);
+                        alert('Failed to create profile.');
+                    });
+                } else {
+                    alert('User information not found!');
+                }
+            }).catch(error => {
+                console.error('Error fetching user information:', error);
+                alert('Failed to retrieve user information.');
+            });
+        }
+    </script>
+</body>
+</html>

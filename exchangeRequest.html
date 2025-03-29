@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #333; }
+    .request-list { max-width: 800px; margin: 20px auto; }
+    .request-item { background-color: #fff; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .request-item h3 { margin: 0 0 10px; color: #444; }
+    .request-item p { margin: 5px 0; color: #666; }
+    .button-container { margin-top: 15px; }
+    .accept-btn, .reject-btn { padding: 10px 15px; margin-right: 10px; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+    .accept-btn { background-color: #4CAF50; color: white; }
+    .accept-btn:hover { background-color: #45a049; }
+    .reject-btn { background-color: #f44336; color: white; }
+    .reject-btn:hover { background-color: #da190b; }
+    .status-label { margin-top: 10px; font-weight: bold; color: #007BFF; }
+    .dialog-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .dialog-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; }
+    .dialog-box p { margin-bottom: 20px; }
+    .dialog-box button { margin: 5px; padding: 10px 20px; cursor: pointer; }
+</style>
+    
+</head>
+<body>
+    
+<h1> Exchange Requests</h1>
+<div class="request-list" id="requestList"></div>
+<div id="dialog" class="dialog-overlay" style="display:none;">
+    <div class="dialog-box">
+      <p id="dialog-message"></p>
+      <button id="confirm-btn">Confirm</button>
+      <button id="cancel-btn">Cancel</button>
+    </div>
+
+<script type="module">
+    import { addNotification } from "./notification.js"; 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+    import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-database.js";
+
+    const firebaseConfig = {   
+        apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+          authDomain: "bookexc.firebaseapp.com",
+          databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+          projectId: "bookexc",
+          storageBucket: "bookexc.appspot.com",
+          messagingSenderId: "688636268839",
+          appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+          measurementId: "G-8TZ99T5M1L" 
+        };
+
+        const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const userId = new URLSearchParams(window.location.search).get("userid");
+const requestList = document.getElementById("requestList");
+const requestsRef = ref(db, "exchange_requests");
+const dialog = document.getElementById('dialog');
+const dialogMessage = document.getElementById('dialog-message');
+const confirmBtn = document.getElementById('confirm-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+let currentAction = null;
+
+// Track rendered requests to prevent duplication
+let renderedRequests = new Set();
+
+
+const profileRef = ref(db, `profiles/${userId}`);
+get(profileRef).then((profileSnap) => {
+    if (profileSnap.exists()) {
+        const userName = profileSnap.val().name; // Book owner's name
+
+        // Listen for requests
+        onValue(requestsRef, async (snapshot) => {
+            const newRequests = new Set();
+
+            if (snapshot.exists()) {
+                const requests = snapshot.val();
+                const receivedRequests = Object.entries(requests)
+                    .map(([key, value]) => ({ id: key, ...value }))
+                    .filter(req => req.requestedTo === userName);
+
+                if (receivedRequests.length === 0) {
+                    requestList.innerHTML = "<p>No exchange requests received.</p>";
+                    renderedRequests.clear();
+                    return;
+                }
+
+                // Render only new requests
+                for (const req of receivedRequests) {
+                    newRequests.add(req.id);
+                    if (!renderedRequests.has(req.id)) {
+                        renderedRequests.add(req.id);
+                        const bookSnap = await get(ref(db, `books/${req.bookRequested}`));
+                        const bookName = bookSnap.exists() ? bookSnap.val().title : 'Unknown Book';
+
+                        const requestItem = document.createElement("div");
+                        requestItem.className = "request-item";
+                        requestItem.id = `request-${req.id}`;
+                        requestItem.innerHTML = `
+                            <h3>Request from ${req.requestedBy}</h3>
+                            <p><strong>Book Name:</strong> ${bookName}</p>
+                            <p class="status-label">Status: ${req.status}</p>
+                            <div class="button-container">
+                                <button class="accept-btn" data-id="${req.id}">Accept</button>
+                                <button class="reject-btn" data-id="${req.id}">Reject</button>
+                            </div>
+                        `;
+                        requestList.appendChild(requestItem);
+
+                        // Attach event listeners
+                        requestItem.querySelector('.accept-btn').addEventListener('click', async () => {
+                            const requestedById = await getUserIdByName(req.requestedBy);
+                            showDialog('Accept this request?', 'accept', req.id, req.bookRequested, requestedById, userId, userName);
+                        });
+
+                        requestItem.querySelector('.reject-btn').addEventListener('click', async () => {
+                            const requestedById = await getUserIdByName(req.requestedBy);
+                            showDialog('Reject this request?', 'reject', req.id, req.bookRequested, requestedById, userId, userName);
+                        });
+                    }
+                }
+
+                // Remove requests that no longer exist
+                renderedRequests.forEach((id) => {
+                    if (!newRequests.has(id)) {
+                        const oldItem = document.getElementById(`request-${id}`);
+                        if (oldItem) oldItem.remove();
+                        renderedRequests.delete(id);
+                    }
+                });
+            } else {
+                requestList.innerHTML = "<p>No exchange requests received.</p>";
+                renderedRequests.clear();
+            }
+        });
+    } else {
+        requestList.innerHTML = "<p>Failed to retrieve user information.</p>";
+    }
+}).catch((error) => {
+    console.error("Error fetching profile information:", error);
+    requestList.innerHTML = "<p>Error loading requests.</p>";
+});
+
+async function getUserIdByName(userName) {
+    const usersRef = ref(db, "profiles");
+    const snapshot = await get(usersRef);
+
+    if (snapshot.exists()) {
+        const users = snapshot.val();
+        for (const [key, value] of Object.entries(users)) {
+            if (value.name === userName) {
+                return key; // Return user ID
+            }
+        }
+    }
+    return null;
+}
+
+function showDialog(message, action, id, bookId, requestedById, ownerId, ownerName) {
+    dialogMessage.textContent = message;
+    dialog.style.display = 'flex';
+    currentAction = { action, id, bookId, requestedById, ownerId, ownerName };
+}
+
+cancelBtn.addEventListener('click', () => {
+    dialog.style.display = 'none';
+    currentAction = null;
+});
+confirmBtn.addEventListener('click', async () => {
+    if (!currentAction) return;
+
+    const { action, id, bookId, requestedById, ownerId, ownerName } = currentAction;
+    const requestRef = ref(db, `exchange_requests/${id}`);
+
+    try {
+        const snapshot = await get(requestRef);
+        if (!snapshot.exists()) {
+            alert("Request not found!");
+            return;
+        }
+
+        const requestData = snapshot.val();
+        const currentStatus = requestData.status;
+
+        if (currentStatus === action) {
+            alert(`This request is already ${action}ed.`);
+            return;
+        }
+
+        if (action === "accept") {
+            
+            await set(ref(db, `exchange_requests/${id}/status`), "accepted");
+            
+            
+            await set(ref(db, `exchange_requests/${id}/bookHandover`), "Borrowed");
+
+            
+            await set(ref(db, `books/${bookId}/status`), "Borrowed");
+
+            // Send notification to requester
+            const notificationMessage = `Your request for the book has been accepted by ${ownerName}.`;
+            addNotification(requestedById, ownerId, bookId, notificationMessage);
+
+            
+            const statusLabel = document.querySelector(`#request-${id} .status-label`);
+            if (statusLabel) {
+                statusLabel.textContent = `Status: accepted`;
+            }
+
+            alert("Request accepted. The book is now marked as Borrowed.");
+
+        } else if (action === "reject") {
+            if (currentStatus === "accepted") {
+                
+                await set(ref(db, `books/${bookId}/status`), "Available");
+
+                
+                await set(ref(db, `exchange_requests/${id}/status`), "rejected");
+
+                
+                const notificationMessage = `Your accepted request for the book has been revoked by ${ownerName}. The book is now available again.`;
+                addNotification(requestedById, ownerId, bookId, notificationMessage);
+                
+                alert("Request status changed back to Rejected. The book is now available again.");
+            } else {
+                
+                await set(ref(db, `exchange_requests/${id}/status`), "rejected");
+
+               
+                const notificationMessage = `Your request for the book has been rejected by ${ownerName}.`;
+                addNotification(requestedById, ownerId, bookId, notificationMessage);
+
+                alert("Request rejected.");
+            }
+
+            
+            const statusLabel = document.querySelector(`#request-${id} .status-label`);
+            if (statusLabel) {
+                statusLabel.textContent = `Status: rejected`;
+            }
+        }
+
+    } catch (error) {
+        console.error("Error processing request:", error);
+        alert("An error occurred while processing the request. Please try again.");
+    }
+
+    dialog.style.display = 'none';
+    currentAction = null;
+});
+
+
+
+
+</script>
+</body>
+</html>

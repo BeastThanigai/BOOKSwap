@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            top:70px;
+            left:245px;
+        }
+    h1{
+        margin-top: 2px;
+    }
+        #wishlist-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+    
+        .wishlist-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 400px; 
+}
+    
+        .wishlist-image img {
+    width: 100%;
+    height: 200px; 
+    object-fit: cover; /* Maintain aspect ratio and crop excess */
+    border-bottom: 1px solid #ccc;
+}
+    
+        .wishlist-details {
+            padding: 15px;
+        }
+    
+        .wishlist-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+    
+        .wishlist-actions button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        .view-more {
+            background-color: #007bff;
+            color: white;
+        }
+    
+        .exchange-btn {
+            background-color: #28a745;
+            color: white;
+        }
+    
+        .remove-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+    
+        #popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+    
+        #popup-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 400px;
+            text-align: center;
+        }
+    
+        #popup-content h3 {
+            margin: 0 0 10px;
+        }
+    
+        #popup-content p {
+            margin: 5px 0;
+        }
+    
+        #popup-content button {
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Wishlist</h1>
+    <div class="wishlist-container" id="wishlist-container">
+       
+    </div>
+
+   
+    <div id="popup-overlay">
+        <div id="popup-content">
+            <h2 id="popup-title"></h2>
+            <p id="popup-author"></p>
+            <p id="popup-description"></p>
+            <p id="popup-status"></p>
+            <p id="popup-genre"></p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, get, set, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+        import { addNotification } from "./notification.js";
+
+       
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+            authDomain: "bookexc.firebaseapp.com",
+            databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+            projectId: "bookexc",
+            storageBucket: "bookexc.appspot.com",
+            messagingSenderId: "688636268839",
+            appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+            measurementId: "G-8TZ99T5M1L"
+        };
+    
+             
+             const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+
+
+const params = new URLSearchParams(window.location.search);
+const userId = params.get("userid");
+
+if (!userId) {
+    alert("User ID not found in the URL. Please log in again.");
+}
+
+const wishlistRef = ref(db, `wishlist/${userId}`);
+
+function loadWishlist() {
+    onValue(wishlistRef, (snapshot) => {
+        const wishlistContainer = document.getElementById("wishlist-container");
+        wishlistContainer.innerHTML = ""; // Clear the wishlist container
+
+        if (snapshot.exists()) {
+            const books = snapshot.val();
+            Object.keys(books).forEach((key) => {
+                const book = books[key];
+                const bookItem = document.createElement("div");
+                bookItem.className = "wishlist-card";
+                bookItem.id = key;
+
+                let base64Image = book.image || null;
+                if (base64Image) {
+                    if (!base64Image.startsWith("data:image/")) {
+                        base64Image = `data:image/jpeg;base64,${base64Image}`;
+                    }
+                    renderWishlistItem(bookItem, book, base64Image, key);
+                } else {
+                    console.warn(`No image provided for book: ${book.title}`);
+                    renderWishlistItem(bookItem, book, "imageBook/book7.jpg", key);
+                }
+
+                wishlistContainer.appendChild(bookItem);
+            });
+        } else {
+            wishlistContainer.innerHTML = "<p>No books in your wishlist!</p>";
+        }
+    });
+}
+
+function renderWishlistItem(bookItem, book, imageUrl, key) {
+    const wishlistID = key;
+    const bookID = book.bookId || book.originalBookID; // Fetch correct book ID
+
+    bookItem.innerHTML = `
+        <div class="wishlist-image">
+            <img src="${imageUrl}" alt="${book.title}" onerror="this.src='defaultImagePath/placeholder.jpg';">
+        </div>
+        <div class="wishlist-details">
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
+            <div class="wishlist-actions">
+                <button onclick='viewMore(${JSON.stringify(book)})' class="view-more">View More</button>
+                <button class="exchange-btn" onclick="handleExchangeRequest('${bookID}', '${userId}')">Exchange Request</button>
+                <button class="remove-btn" onclick="removeFromWishlist('${wishlistID}')">Remove</button>
+            </div>
+        </div>
+    `;
+}
+
+window.viewMore = function (book) {
+    document.getElementById("popup-title").innerText = `Title: ${book.title}`;
+    document.getElementById("popup-author").innerText = `Author: ${book.author}`;
+    document.getElementById("popup-description").innerText = `Description: ${book.description || 'No description available'}`;
+    document.getElementById("popup-status").innerText = `Status: ${book.status || 'Not specified'}`;
+    document.getElementById("popup-genre").innerText = `Genre: ${book.genre || 'Not specified'}`;
+    document.getElementById("popup-overlay").style.display = "flex";
+};
+
+window.closePopup = function () {
+    document.getElementById("popup-overlay").style.display = "none";
+};
+
+window.handleExchangeRequest = function (bookID, userId) {
+    if (!userId) {
+        alert("You must be logged in to request an exchange.");
+        return;
+    }
+
+    console.log("Requesting exchange for bookID:", bookID);
+
+    const booksRef = ref(db, "books/"); 
+
+    get(booksRef)
+        .then((snapshot) => {
+            if (!snapshot.exists()) {
+                alert("No books found in the system.");
+                return;
+            }
+
+            let foundBook = null;
+            let bookKey = null; 
+            let bookOwnerId = null;
+
+            snapshot.forEach((childSnapshot) => {
+                const bookData = childSnapshot.val();
+                if (bookData.id === bookID) { 
+                    foundBook = bookData;
+                    bookKey = childSnapshot.key; // Get the actual key from Firebase
+                    bookOwnerId = bookData.userid;
+                }
+            });
+
+            if (!foundBook || !bookKey) {
+                alert("Book not found in the system.");
+                return;
+            }
+
+            if (!bookOwnerId) {
+                alert("Error: Book owner not found.");
+                return;
+            }
+
+            if (bookOwnerId === userId) {
+                alert("You cannot exchange your own book.");
+                return;
+            }
+
+            if (!foundBook.status || foundBook.status.toLowerCase() !== "available") {
+                alert(`Sorry, "${foundBook.title}" is currently unavailable for exchange.`);
+                return;
+            }
+
+            createExchangeRequest(bookKey, bookOwnerId, userId, foundBook.title);
+        })
+        .catch((error) => {
+            console.error("Error fetching books:", error);
+            alert("Failed to fetch book information.");
+        });
+};
+
+function createExchangeRequest(bookKey, bookOwnerId, userId, bookTitle) {
+    const requestID = generateUniqueID();
+
+    Promise.all([
+        get(ref(db, `profiles/${userId}`)),    // Requester's profile
+        get(ref(db, `profiles/${bookOwnerId}`)) // Book owner's profile
+    ]).then(([requestedBySnap, requestedToSnap]) => {
+        const requestedByName = requestedBySnap.exists() ? requestedBySnap.val().name : "Unknown User";
+        const requestedToName = requestedToSnap.exists() ? requestedToSnap.val().name : "Unknown User";
+
+        const exchangeRef = ref(db, `exchange_requests/${requestID}`);
+
+        set(exchangeRef, {
+            requestID: requestID,
+            requestedBy: requestedByName,
+            requestedTo: requestedToName,
+            bookRequested: bookKey, 
+            status: "pending",
+            bookHandover: "pending",
+            bookReturn: "pending",
+            timestamp: Date.now()
+        })
+            .then(() => {
+                alert(`Exchange request for "${bookTitle}" sent successfully!`);
+                const notificationMessage = `${requestedByName} requested an exchange for "${bookTitle}".`;
+                addNotification(bookOwnerId, userId, bookKey, notificationMessage);
+            })
+            .catch((error) => {
+                console.error("Error sending exchange request:", error);
+                alert("Failed to send exchange request. Please try again.");
+            });
+    }).catch((error) => {
+        console.error("Error fetching profile names:", error);
+        alert("Failed to retrieve user information.");
+    });
+}
+
+function generateUniqueID() {
+    return "req_" + Math.random().toString(36).substr(2, 9);
+}
+
+window.removeFromWishlist = function (bookKey) {
+    const bookRef = ref(db, `wishlist/${userId}/${bookKey}`);
+    remove(bookRef)
+        .then(() => {
+            alert("Book removed from wishlist!");
+        })
+        .catch((error) => {
+            console.error("Error removing book:", error);
+        });
+};
+
+loadWishlist();
+
+
+    </script>
+    
+</body>
+</html>

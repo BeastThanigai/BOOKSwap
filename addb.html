@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+           
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+               
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #302626;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"], input[type="file"], select, textarea {
+            width: 650px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .form-group img {
+            max-width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #btnsubmit, #btncancel{
+            width: 100%;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #btnsubmit{
+            background-color: black;
+           
+        }
+        #btncancel{
+            background-color: black;
+           
+        }
+
+        #btnsubmit:hover, #btncancel:hover {
+            background-color:dimgray;
+        }
+
+        .terms-box {
+            background: #ffefef;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #d9534f;
+            margin-bottom: 10px;
+        }
+
+        .terms-box strong {
+            color: #b71c1c;
+        }
+        
+        .terms-box a {
+            color: #b71c1c;
+            text-decoration: underline;
+        }
+        /* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    select,
+    textarea {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    h2 {
+        font-size: 18px;
+    }
+
+    label {
+        font-size: 12px;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    select,
+    textarea {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    #btnsubmit,
+    #btncancel {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .terms-box {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Book</h2>
+        <form id="addBookForm">
+            <div class="form-group">
+                <label for="title">Book Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter book title" required>
+            </div>
+    
+            <div class="form-group">
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" placeholder="Enter author name" required>
+            </div>
+    
+            <div class="form-group">
+                <label for="genre">Genre:</label>
+                <input type="text" id="genre" name="genre" placeholder="Enter genre (e.g., Fiction, Science)">
+            </div>
+    
+            <div class="form-group">
+                <label for="condition">Condition:</label>
+                <select id="condition" name="condition" required>
+                    <option value="New">New</option>
+                    <option value="Like New">Like New</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" placeholder="Provide a brief description of the book"></textarea>
+            </div>
+    
+            <div class="form-group">
+                <label for="image">Upload Book Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+                <img id="preview" style="display:none;">
+            </div>
+    
+            <div class="terms-box">
+                <strong>Warning:</strong> Uploading illegal, pirated, or restricted books is strictly prohibited. Violators may face **permanent account suspension** or **legal action**.
+                <br><br>
+                <strong>Allowed Books:</strong> Original books that you legally own.
+                <br>
+                <strong>Prohibited Books:</strong> Pirated e-books, scanned copies, or any copyrighted material.
+                <br><br>
+                Read our <a href="#">Terms and Conditions</a> for details.
+            </div>
+
+            <!-- Terms & Conditions Checkbox -->
+            <div class="form-group">
+                <input type="checkbox" id="termsCheckbox">
+                <label for="termsCheckbox">I agree to the <a href="#">Terms and Conditions</a>.</label>
+            </div>
+    
+            <button type="submit" id="btnsubmit">Add Book</button>
+        </form>
+        <button id="btncancel">Cancel</button>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+            authDomain: "bookexc.firebaseapp.com",
+            projectId: "bookexc",
+            storageBucket: "bookexc.appspot.com",
+            messagingSenderId: "688636268839",
+            appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+            measurementId: "G-8TZ99T5M1L",
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+    
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userid'); 
+        if (!userId) {
+            alert('User ID not found. Please log in again.');
+        }
+    
+        window.previewImage = function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const preview = document.getElementById('preview');
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            }
+        };
+    
+        const form = document.getElementById('addBookForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            // ✅ 1. Form Validation
+            const title = document.getElementById('title').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const genre = document.getElementById('genre').value.trim();
+            const condition = document.getElementById('condition').value.trim();
+            let description = document.getElementById('description').value.trim();
+            const termsCheckbox = document.getElementById('termsCheckbox');
+    
+            // ✅ If description is empty, set default value
+            if (!description) description = "No description provided";
+    
+            // ✅ Regex Validation: Only alphabets & spaces
+            const alphaRegex = /^[A-Za-z\s]+$/;
+            if (!alphaRegex.test(title)) {
+                alert("Book Title should contain only alphabets and spaces.");
+                return;
+            }
+            if (!alphaRegex.test(author)) {
+                alert("Author Name should contain only alphabets and spaces.");
+                return;
+            }
+            if (genre && !alphaRegex.test(genre)) { 
+                alert("Genre should contain only alphabets and spaces.");
+                return;
+            }
+
+              // ✅ Banned Word Check
+              const bannedWords = ["pirated", "illegal", "scam", "fake", "banned"];
+            function containsBannedWords(text) {
+                return bannedWords.some(word => text.toLowerCase().includes(word));
+            }
+            if (containsBannedWords(title) || containsBannedWords(description)) {
+                alert("Your book title or description contains restricted words. Please modify it.");
+                return;
+            }
+    
+            // ✅ Terms & Conditions Check
+            if (!termsCheckbox.checked) {
+                alert("You must agree to the Terms and Conditions to add the book.");
+                return;
+            }
+    
+            try {
+                // ✅ 2. Check for next available book ID
+                const booksRef = ref(database, 'books');
+                let nextId = 1;
+                await get(booksRef).then(snapshot => {
+                    if (snapshot.exists()) {
+                        const books = snapshot.val();
+                        const ids = Object.keys(books).map(key => parseInt(books[key].id.replace('BOOK', ''), 10));
+                        nextId = Math.max(...ids) + 1;
+                    }
+                });
+    
+                const bookId = `BOOK${nextId}`;
+                const formData = new FormData(form);
+    
+                // ✅ 3. Image Upload (Convert to Base64)
+                const file = formData.get('image');
+                let base64Image = null;
+                if (file && file.size > 0) {
+                    base64Image = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = (error) => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                }
+    
+                
+                const data = {
+                    id: bookId,
+                    userid: userId, 
+                    title: title,
+                    author: author,
+                    genre: genre || "Not specified",
+                    condition: condition,
+                    description: description,
+                    image: base64Image, 
+                    status: "Available",
+                    reportCount: 0,  
+                    reviews: { placeholder: "No reviews yet" },       
+                    averageRating: 0,
+                };
+    
+                await set(push(booksRef), data);
+                alert(`Book added with ID: ${bookId}`);
+                form.reset();
+                window.location.href = `viewb.html?userid=${userId}`;
+                document.getElementById('preview').style.display = 'none';
+            } catch (error) {
+                console.error("Error submitting form:", error);
+                alert("Failed to add book. Check console for more details.");
+            }
+        });
+    
+        document.getElementById('btncancel').addEventListener('click', () => {
+            window.location.href = `viewb.html?userid=${userId}`; 
+        });
+    </script>
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+          

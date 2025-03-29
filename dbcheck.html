@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="db2.css">
+   
+</head>
+<body>
+    <div class="container">
+        <nav id="sidebar">
+            <div class="menu-bar">
+                <ul>
+                    <li><a href="#" onclick="loadContent('addb.html')">Add</a></li>
+                    <li><a href="#" onclick="loadContent('deleteb.html')">Delete</a></li>
+                    <li><a href="#" onclick="loadContent('updateb.html')">Update</a></li>
+                    <li><a href="#" onclick="loadContent('addc.html')">View</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <header>
+            <h1>Dashboard</h1>
+        </header>
+
+        <main id="main-content">
+            <h2>Welcome to the Dashboard</h2>
+            <p>Select an option from the sidebar to load content here.</p>
+        </main>
+    </div>
+    <script>
+        
+      async function loadContent(url) {
+        const targetElement = document.querySelector('main')
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch content.');
+
+        // Get the HTML content
+        const data = await response.text();
+
+        // Inject the HTML into the target element
+        targetElement.innerHTML = data;
+
+        // Manually evaluate scripts in the fetched content
+        const scripts = targetElement.querySelectorAll('script');
+        scripts.forEach((script) => {
+            const newScript = document.createElement('script');
+            newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+            document.body.removeChild(newScript);
+        });
+    } catch (error) {
+        console.error('Error loading content:', error);
+    }
+}
+
+       
+    </script>
+</body>
+</html>

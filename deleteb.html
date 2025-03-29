@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #302626;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"] {
+            width: 650px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: dimgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delete Book</h2>
+        <form id="deleteBookForm">
+            <!-- Book ID -->
+            <div class="form-group">
+                <label for="bookId">Book ID:</label>
+                <input type="text" id="bookId" name="bookId" placeholder="Enter Book ID" required>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit">Delete Book</button>
+        </form>
+    </div>
+
+    <script type="module">
+        // Import Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+            authDomain: "bookexc.firebaseapp.com",
+            databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+            projectId: "bookexc",
+            storageBucket: "bookexc.appspot.com",
+            messagingSenderId: "688636268839",
+            appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+            measurementId: "G-8TZ99T5M1L"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Handle form submission for deleting a book
+        const form = document.getElementById('deleteBookForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bookId = form.bookId.value.trim();
+
+            try {
+                // Reference to the books collection
+                const booksRef = ref(database, 'books');
+                const snapshot = await get(booksRef);
+
+                if (snapshot.exists()) {
+                    const books = snapshot.val();
+                    const bookKey = Object.keys(books).find(key => books[key].id === bookId);
+
+                    if (bookKey) {
+                        // Remove the book entry
+                        const bookRef = ref(database, `books/${bookKey}`);
+                        await remove(bookRef);
+                        alert(`Book with ID: ${bookId} has been successfully deleted.`);
+                        form.reset();
+                    } else {
+                        alert(`No book found with ID: ${bookId}.`);
+                    }
+                } else {
+                    alert("No books exist in the database.");
+                }
+            } catch (error) {
+                console.error("Error deleting book:", error);
+                alert("Failed to delete book. Check the console for more details.");
+            }
+        });
+    </script>
+</body>
+</html>

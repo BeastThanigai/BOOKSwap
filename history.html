@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px; }
+        h2 { text-align: center; color: #333; margin-bottom: 20px; }
+    .transaction-container {
+        margin-left: 150px;
+        width: 1100px;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.transactions {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.borrowed-section, .lent-section {
+    flex: 1;
+    border: 2px solid #4caf50;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #f0f7f4;
+}
+
+.transaction-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    margin: 5px 0;
+}
+
+.transaction-item p {
+    margin: 5px 0;
+}
+
+    </style>
+</head>
+<body>
+    <div class="transaction-container">
+        <h2>Your Transaction History</h2>
+    
+        <div class="transactions">
+            <div class="borrowed-section">
+                <h3>Borrowed Books</h3>
+                <div id="borrowedList"></div>
+            </div>
+    
+            <div class="lent-section">
+                <h3>Lent Books</h3>
+                <div id="lentList"></div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+        import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-database.js";
+
+const firebaseConfig = {   
+    apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+      authDomain: "bookexc.firebaseapp.com",
+      databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+      projectId: "bookexc",
+      storageBucket: "bookexc.appspot.com",
+      messagingSenderId: "688636268839",
+      appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+      measurementId: "G-8TZ99T5M1L" 
+    };
+
+    const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const userId = new URLSearchParams(window.location.search).get("userid");
+const borrowedList = document.getElementById("borrowedList");
+const lentList = document.getElementById("lentList");
+
+
+async function getUserName(userId) {
+    const profileRef = ref(db, `profiles/${userId}`);
+    try {
+        const snapshot = await get(profileRef);
+        return snapshot.exists() ? snapshot.val().name : null;
+    } catch (error) {
+        console.error("Error fetching user name:", error);
+        return null;
+    }
+}
+
+
+async function getBookName(bookID) {
+    const bookRef = ref(db, `books/${bookID}`);
+    try {
+        const snapshot = await get(bookRef);
+        return snapshot.exists() ? snapshot.val().title : "Unknown Book";
+    } catch (error) {
+        console.error(`Error fetching book name for ID ${bookID}:`, error);
+        return "Unknown Book";
+    }
+}
+
+
+async function fetchTransactionHistory() {
+    const userName = await getUserName(userId);
+    if (!userName) {
+        borrowedList.innerHTML = "<p>User not found.</p>";
+        lentList.innerHTML = "<p>User not found.</p>";
+        return;
+    }
+
+    const requestsRef = ref(db, "exchange_requests");
+
+    try {
+        const snapshot = await get(requestsRef);
+        if (!snapshot.exists()) {
+            borrowedList.innerHTML = "<p>No borrowed books found.</p>";
+            lentList.innerHTML = "<p>No lent books found.</p>";
+            return;
+        }
+
+        const requests = snapshot.val();
+        let borrowedHTML = "";
+        let lentHTML = "";
+
+        for (const requestId in requests) {
+            const req = requests[requestId];
+            if (req.status === "reject" || req.status === "pending") continue;
+
+            const bookName = await getBookName(req.bookRequested);
+            const date = new Date(req.timestamp).toLocaleString();
+
+            if (req.requestedBy === userName) {
+                borrowedHTML += `
+                    <div class="transaction-item">
+                        <p><strong>Book:</strong> ${bookName}</p>
+                        <p><strong>Borrowed From:</strong> ${req.requestedTo}</p>
+                        <p><strong>Status:</strong> ${req.status}</p>
+                        <p><strong>Handover:</strong> ${req.bookHandover}</p>
+                        <p><strong>Return:</strong> ${req.bookReturn}</p>
+                        <p><strong>Date:</strong> ${date}</p>
+                    </div>`;
+            }
+
+            if (req.requestedTo === userName) {
+                lentHTML += `
+                    <div class="transaction-item">
+                        <p><strong>Book:</strong> ${bookName}</p>
+                        <p><strong>Lent To:</strong> ${req.requestedBy}</p>
+                        <p><strong>Status:</strong> ${req.status}</p>
+                        <p><strong>Handover:</strong> ${req.bookHandover}</p>
+                        <p><strong>Return:</strong> ${req.bookReturn}</p>
+                        <p><strong>Date:</strong> ${date}</p>
+                    </div>`;
+            }
+        }
+
+        borrowedList.innerHTML = borrowedHTML || "<p>No borrowed books found.</p>";
+        lentList.innerHTML = lentHTML || "<p>No lent books found.</p>";
+
+    } catch (error) {
+        console.error("Error fetching transaction history:", error);
+        borrowedList.innerHTML = "<p>Error loading borrowed books.</p>";
+        lentList.innerHTML = "<p>Error loading lent books.</p>";
+    }
+}
+
+// Call the function on page load
+fetchTransactionHistory();
+
+
+    </script>
+</body>
+</html>

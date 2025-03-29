@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Book</title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #302626;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input[type="text"], input[type="file"], select, textarea {
+            width: 650px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .form-group img {
+            max-width: 100%;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #btnsubmit {
+            background-color: black;
+        }
+
+        #btncancel {
+            background-color: black;
+            
+        }
+
+        #btnsubmit:hover, #btncancel:hover {
+            background-color: dimgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Update Book</h2>
+        <form id="updateBookForm">
+
+            
+            <div class="form-group">
+                <label for="title">Book Title:</label>
+                <input type="text" id="title" name="title" placeholder="Enter book title" disabled>
+            </div>
+
+           
+            <div class="form-group">
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" placeholder="Enter author name" disabled>
+            </div>
+
+            <div class="form-group">
+                <label for="genre">Genre:</label>
+                <input type="text" id="genre" name="genre" placeholder="Enter genre (e.g., Fiction, Science)" disabled>
+            </div>
+
+            
+            <div class="form-group">
+                <label for="condition">Condition:</label>
+                <select id="condition" name="condition" disabled>
+                    <option value="New">New</option>
+                    <option value="Like New">Like New</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                </select>
+            </div>
+
+           
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" placeholder="Provide a brief description of the book" disabled></textarea>
+            </div>
+
+            
+            <div class="form-group">
+                <label for="image">Upload Book Image:</label>
+                <input type="file" id="image" name="image" accept="image/*" disabled onchange="previewImage(event)">
+                <img id="preview" style="display:none;">
+            </div>
+
+           
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" name="status" disabled>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+                </select>
+            </div>
+
+            
+            <button type="submit" id="btnsubmit" disabled>Update Book</button>
+            <button id="btncancel">Cancel</button>
+        </form>
+    </div>
+
+    <script type="module">
+       
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+            authDomain: "bookexc.firebaseapp.com",
+            databaseURL: "https://bookexc-default-rtdb.firebaseio.com",
+            projectId: "bookexc",
+            storageBucket: "bookexc.appspot.com",
+            messagingSenderId: "688636268839",
+            appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+            measurementId: "G-8TZ99T5M1L"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+    
+        const urlParams = new URLSearchParams(window.location.search);
+    const bookId = urlParams.get('bookId');
+    const userId = urlParams.get('userid');
+
+    console.log("User ID:", userId);
+    console.log("Book ID:", bookId);
+
+    if (!bookId) {
+        alert("Book ID is missing from the URL!");
+    } else {
+        try {
+            const bookRef = ref(database, `books/${bookId}`);
+            get(bookRef)
+                .then(snapshot => {
+                    if (snapshot.exists()) {
+                        const bookDetails = snapshot.val();
+
+                        document.getElementById('title').value = bookDetails.title || '';
+                        document.getElementById('author').value = bookDetails.author || '';
+                        document.getElementById('genre').value = bookDetails.genre || '';
+                        document.getElementById('condition').value = bookDetails.condition || '';
+                        document.getElementById('description').value = bookDetails.description || '';
+                        document.getElementById('status').value = bookDetails.status || 'Available';
+
+                        enableFields();
+                    } else {
+                        alert("No book found with the provided Book ID.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching book details:", error);
+                    alert("Failed to fetch book details. Check console for more information.");
+                });
+        } catch (error) {
+            console.error("Unexpected error:", error);
+            alert("An unexpected error occurred. Check the console for details.");
+        }
+    }
+
+    function enableFields() {
+        document.getElementById('title').disabled = false;
+        document.getElementById('author').disabled = false;
+        document.getElementById('genre').disabled = false;
+        document.getElementById('condition').disabled = false;
+        document.getElementById('description').disabled = false;
+        document.getElementById('status').disabled = false;
+        document.getElementById('btnsubmit').disabled = false;
+    }
+
+    const form = document.getElementById('updateBookForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+
+        try {
+            const title = document.getElementById('title').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const genre = document.getElementById('genre').value.trim();
+            const condition = document.getElementById('condition').value.trim();
+            let description = document.getElementById('description').value.trim();
+            const status = document.getElementById('status').value;
+
+               // ✅ If description is empty, set default value
+               if (!description) description = "No description provided";
+    
+    // ✅ Regex Validation: Only alphabets & spaces
+    const alphaRegex = /^[A-Za-z\s]+$/;
+    if (!alphaRegex.test(title)) {
+        alert("Book Title should contain only alphabets and spaces.");
+        return;
+    }
+    if (!alphaRegex.test(author)) {
+        alert("Author Name should contain only alphabets and spaces.");
+        return;
+    }
+    if (genre && !alphaRegex.test(genre)) { 
+        alert("Genre should contain only alphabets and spaces.");
+        return;
+    }
+
+      // ✅ Banned Word Check
+      const bannedWords = ["pirated", "illegal", "scam", "fake", "banned"];
+    function containsBannedWords(text) {
+        return bannedWords.some(word => text.toLowerCase().includes(word));
+    }
+    if (containsBannedWords(title) || containsBannedWords(description)) {
+        alert("Your book title or description contains restricted words. Please modify it.");
+        return;
+    }
+    
+            const updatedData = {
+                title: title,
+                author: author,
+                genre: genre,
+                condition: condition,
+                description: description,
+                status: status
+            };
+           
+
+         
+
+            await update(ref(database, `books/${bookId}`), updatedData);
+            alert("Book details updated successfully!");
+            form.reset();
+            window.location.href = `viewb.html?userid=${userId}`;
+        } catch (error) {
+            console.error("Error updating book details:", error);
+            alert("Failed to update book details. Check console for more information.");
+        }
+    });
+
+    document.getElementById('btncancel').addEventListener('click', () => {
+        window.location.href = `viewb.html?userid=${userId}`;
+    });
+    </script>
+    
+    
+    
+    
+</body>
+</html>

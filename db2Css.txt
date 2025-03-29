@@ -1,0 +1,328 @@
+
+Provide options for the owner to confirm receipt or report issues.​
+
+Owner Confirms Book Return:
+
+In the owner's dashboard, list books with pending return confirmations.​
+
+Once the owner confirms receipt, update the book's status to "Available" and mark the exchange as "Completed."​
+
+Automated Reminders for Due Dates:
+
+Implement a system to send reminders to both borrower and owner as the due date approaches and if the due date passes without a return initiation.
+
+
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", serif;
+}
+:root{
+    --base-clr: #11121a;
+    --line-clr: #42434a;
+    /*  --text-clr: #e6e6ef;
+    --hover-clr: #222533;*/
+    --text-clr:#000;
+    --hover-clr:rgba(213, 173, 173, 0.501);
+    --accent-clr: #5e63ff;
+    --secondary-text-clr: #b0b3c1;
+}
+html{
+    font-family: sans-serif;
+    line-height: 1.5rem;
+}
+
+body{
+    height: 100vh;
+    width: 100%;
+   background-image: url(imageBook/book1.avif);
+   background-position: center;
+   background-attachment: fixed; 
+   margin: 0;
+   padding: 0;
+    color: var(--text-clr);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    
+}
+#sidebar{
+    box-sizing: border-box;
+    height: calc(100vh - 60px);
+    width:220px;
+    padding: 5px 10px;
+    
+    background-color: var(--base-clr);
+    border-right: 1px solid var(--line-clr) ;
+
+    position: fixed;
+    top:5px;
+    left:0;
+    transition: 300ms ease-in-out;
+    overflow: hidden;
+    text-wrap: nowrap;
+
+    background: transparent;
+    backdrop-filter: blur(27px);
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+.sidebar::-webkit-scrollbar {
+    display: none; /* Hide scrollbar (for Chrome, Edge, etc.) */
+}
+#sidebar ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+#sidebar ul li {
+    margin: 5px 0;
+}
+#sidebar ul li, #toggle-btn{
+    cursor: pointer;
+}
+#sidebar.close{
+    padding: 5px;
+    width: 60px;
+    background-color: #fff;
+}
+#sidebar > ul > li:first-child{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    .logo{
+        font-weight: 600;
+    }
+}
+
+#sidebar a, #sidebar .dropdown-btn, #sidebar .logo{
+    color: var(--text-clr);
+    text-decoration: none;
+    border-radius: 13px;
+    padding: .85em;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+.dropdown-btn{
+    width: 100%;
+    text-align: left;
+    background: none;
+    border:none;
+    font:inherit;
+    cursor:pointer;
+}
+
+
+#sidebar svg{
+    flex-shrink: 0;
+    fill: var(--text-clr);
+}
+#sidebar a span, #sidebar .dropdown-btn span{
+    flex-grow: 1;
+
+}
+#sidebar a:hover, #sidebar .dropdown-btn:hover{
+    background-color: var(--hover-clr);
+
+}
+
+
+#sidebar .submenu{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: 300ms ease-in-out;
+
+    >div{
+        overflow: hidden;
+    }
+}
+#sidebar .submenu.show{
+    grid-template-rows: 1fr;
+}
+.dropdown-btn svg{
+    transition: 200ms ease;
+}
+.rotate svg:last-child{
+    rotate:-180deg;
+
+}
+#sidebar .submenu a{
+    padding-left: 2em;
+}
+
+#toggle-btn{
+    margin-left: auto;
+    padding: 1em;
+    background: none;
+    border: none;
+    border-radius: .5em;
+    cursor: pointer;
+
+    svg{
+        transition: rotate 150ms ease;
+    }
+}
+#toggle-btn:hover{
+    background-color: var(--hover-clr);
+}
+
+
+
+header {
+    height: 65px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background-color: #000;;
+    color: white;
+    position: fixed;
+    left: 225px;
+    top:5px;
+    z-index: 1000;
+    width: 1310px;
+    transition: 300ms ease-in-out;
+
+}
+header.collapsed{
+   padding: (25px, 7%);
+   position: fixed;
+   top:5px;
+   left:65px;
+   width: 1467px;
+}
+
+header h2 {
+    font-size: 28px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    position: absolute;
+    right:100px;
+    flex-shrink: 0;
+}
+
+.search-bar input {
+    height: 35px;
+    width: 200px;
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.search-bar button {
+    padding: 5px;
+    font-size: 14px;
+    height: 35px;
+    width: 85px;
+    color: white;
+    background-color: #444;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color:grey;
+}
+header #profile {
+    margin-left: 55px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-pic{
+    width: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left:15px;
+    margin-right: 5px;
+}
+
+.sub-menu-wrap{
+    position: absolute;
+    top:100%;
+    right:0px;
+    width: 260px;
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.5s;
+}
+.sub-menu-wrap.open{
+    max-height: 400px;
+}
+.sub-menu{
+    background: transparent;
+    backdrop-filter: blur(27px);
+    padding: 20px;
+    margin: 10px;
+    color: var(--text-clr);
+}
+.user-info{
+    display: flex;
+    align-items: center;
+}
+.user-info h3{
+    font-weight: 500;
+}
+.user-info img{
+    width: 60px;
+    height: 55px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+.sub-menu hr{
+    border: 0;
+    height: 1px;
+    width: 100%;
+    margin: 15px 0 10px;
+    background-color: var(--text-clr);
+}
+.sub-menu-link{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #fff;
+    margin: 12px 0;
+    color: var(--text-clr);
+    transition: transform 0.5s ;
+}
+.sub-menu-link p{
+    width: 100%;
+}
+.sub-menu-link svg{
+    width: 40px;
+    margin-right: 10px;
+    color: white;
+    fill: var(--text-clr);
+}
+
+.sub-menu-link:hover{
+    transform:translateX(4px);
+}
+.sub-menu-link p:hover{
+    font-weight: 600;
+}
+.iframe-content {
+    width: 100%;
+    height: calc(100vh - 95px); /* Adjust height based on the header */
+    border: none;
+    margin: 50px 130px;
+    background: transparent;
+  }
+  
