@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications</title>
     <style>
-        body {
+       body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background: #f5f5f5;
+    margin: 0;
+    padding: 10px;
 }
 
 .container {
@@ -46,6 +48,65 @@ li.read {
     color: #777;
 }
 
+/* Close Button */
+#closeNotificationPanel {
+    position: fixed;
+    bottom: 15px;
+    right: 30px;
+    padding: 8px 15px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#closeNotificationPanel:hover {
+    background-color: #0056b3;
+}
+
+/* ✅ Responsive for Small Screens (Phones) */
+@media (max-width: 480px) {
+    body{
+        margin-top: 10%;
+        margin-left: 5%;
+    }
+    .container {
+        width: 65%;
+        padding: 5px;
+        margin-left: 17%;
+    }
+
+    li {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    #closeNotificationPanel {
+        bottom: 45px;
+        right: 18px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}
+
+/* ✅ Responsive for Tablets & Small Windows */
+@media (max-width: 768px) {
+    .container {
+        width: 75%;
+        margin-left: 23px;
+        padding: 18px;
+    }
+
+    li {
+        font-size: 15px;
+        padding: 9px;
+    }
+}
+
+
     </style>
 </head>
 <body>
@@ -54,6 +115,8 @@ li.read {
         <ul id="notificationList"></ul>
 
     </div>
+    <button id="closeNotificationPanel">Close</button>
+
 
     <script src="notification.js" type="module"></script>
 </body>

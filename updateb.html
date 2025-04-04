@@ -6,87 +6,190 @@
     <title>Update Book</title>
     <style>
         
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
+   
+/* 🌍 General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+/* 📌 Form Container */
+.container {
+    max-width: 700px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    box-sizing: border-box;
+}
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
+/* 📌 Header */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 2rem;
+}
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+/* 📌 Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.form-group {
+    margin-bottom: 20px;
+}
 
-        label {
-            font-size: 14px;
-            color: #302626;
-            margin-bottom: 5px;
-            display: block;
-        }
+label {
+    font-size: 14px;
+    color: #302626;
+    margin-bottom: 5px;
+    display: block;
+}
 
-        input[type="text"], input[type="file"], select, textarea {
-            width: 650px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
+/* 📌 Inputs & Textarea */
+input[type="text"],
+input[type="file"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
 
-        textarea {
-            height: 100px;
-        }
+textarea {
+    height: 100px;
+}
 
-        .form-group img {
-            max-width: 100%;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+/* 📌 Image Preview */
+.form-group img {
+    max-width: 100%;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
 
-        button {
-            background-color: black;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
+/* 📌 Buttons */
+#btnsubmit, #btncancel {
+    width: 100%;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: black;
+}
 
-        #btnsubmit {
-            background-color: black;
-        }
+#btnsubmit:hover, #btncancel:hover {
+    background-color: dimgray;
+}
 
-        #btncancel {
-            background-color: black;
-            
-        }
+/* 📌 Terms Box */
+.terms-box {
+    background: #ffefef;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #d9534f;
+    margin-bottom: 10px;
+}
 
-        #btnsubmit:hover, #btncancel:hover {
-            background-color: dimgray;
-        }
+.terms-box strong {
+    color: #b71c1c;
+}
+
+.terms-box a {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+
+@media screen and (max-width: 768px) {
+    .container {
+        width: 80%;
+        padding: 15px;
+        margin-left: 110px;
+        
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    select,
+    textarea {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    #btnsubmit,
+    #btncancel {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    
+    .container {
+        width: 80%;  /* Expands the form to occupy most of the screen */
+        padding: 8.5px;
+        margin-left:55px; /* Centers it horizontally */
+        overflow-x: hidden; /* Prevents horizontal scrolling */
+        overflow-y: auto; /* Allows scrolling only if content overflows */
+    }
+
+    /* 🔹 Ensure No Unwanted Scrollbars */
+    body {
+        overflow-x: hidden; /* Prevents horizontal scrolling */
+        overflow-y: auto; /* Allows scrolling only if content overflows */
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    label {
+        font-size: 12px;
+    }
+
+    /* 🔹 Fix Inputs & Select Width */
+    input[type="text"],
+    input[type="file"],
+    select,
+    textarea {
+        font-size: 12px;
+        padding: 8px;
+        width: 100%; /* Makes inputs stretch across the container */
+        box-sizing: border-box; /* Prevents padding from increasing width */
+    }
+
+    #btnsubmit,
+    #btncancel {
+        font-size: 14px;
+        padding: 10px;
+        width: 100%; /* Ensures full width for buttons */
+    }
+
+    .terms-box {
+        font-size: 12px;
+        padding: 8px;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -192,9 +295,28 @@
                         document.getElementById('genre').value = bookDetails.genre || '';
                         document.getElementById('condition').value = bookDetails.condition || '';
                         document.getElementById('description').value = bookDetails.description || '';
-                        document.getElementById('status').value = bookDetails.status || 'Available';
+                       // document.getElementById('status').value = bookDetails.status || 'Available';
 
-                        enableFields();
+                       const statusField = document.getElementById('status');
+
+if (bookDetails.status === 'Borrowed') {
+    statusField.innerHTML = `<option value="Borrowed" selected>Borrowed</option>`;
+    statusField.disabled = true; // Prevents changing status if Borrowed
+} else {
+    statusField.innerHTML = `
+        <option value="Available" ${bookDetails.status === 'Available' ? 'selected' : ''}>Available</option>
+        <option value="Not Available" ${bookDetails.status === 'Not Available' ? 'selected' : ''}>Not Available</option>
+    `;
+    statusField.disabled = false; // Allow status change
+}
+
+
+
+                        if (bookDetails.image) {
+                        document.getElementById('image').src = `data:image/jpeg;base64,${bookDetails.imageBinary}`;
+                        document.getElementById('image').style.display = "block";
+                    }
+                                   enableFields();
                     } else {
                         alert("No book found with the provided Book ID.");
                     }
@@ -208,6 +330,14 @@
             alert("An unexpected error occurred. Check the console for details.");
         }
     }
+    window.previewImage = function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const preview = document.getElementById('preview');
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            }
+        };
 
     function enableFields() {
         document.getElementById('title').disabled = false;
@@ -216,14 +346,29 @@
         document.getElementById('condition').disabled = false;
         document.getElementById('description').disabled = false;
         document.getElementById('status').disabled = false;
+        document.getElementById('image').disabled = false; // ✅ Enable Image Upload
         document.getElementById('btnsubmit').disabled = false;
     }
+   
+
+
 
     const form = document.getElementById('updateBookForm');
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-
+    
+        const formData = new FormData(form);
+    const file = formData.get('image');
+                let base64Image = null;
+                if (file && file.size > 0) {
+                    base64Image = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = (error) => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                }
+                
         try {
             const title = document.getElementById('title').value.trim();
             const author = document.getElementById('author').value.trim();
@@ -231,6 +376,7 @@
             const condition = document.getElementById('condition').value.trim();
             let description = document.getElementById('description').value.trim();
             const status = document.getElementById('status').value;
+           // const imageFile = document.getElementById('image').files[0]; // ✅ Get new image file
 
                // ✅ If description is empty, set default value
                if (!description) description = "No description provided";
@@ -259,6 +405,9 @@
         alert("Your book title or description contains restricted words. Please modify it.");
         return;
     }
+
+  
+        
     
             const updatedData = {
                 title: title,
@@ -266,7 +415,8 @@
                 genre: genre,
                 condition: condition,
                 description: description,
-                status: status
+                status: status,
+                image:base64Image
             };
            
 

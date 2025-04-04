@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="db2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 </head>
 
 <body>
@@ -44,7 +46,7 @@
             <li>
                 <a href="exchangeRequest.html" target="content-frame" class="menu-item">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#Fff"><path d="M480-600 340-740l140-140 140 140-140 140ZM40-160v-160q0-34 23.5-57t56.5-23h131q20 0 38 10t29 27q29 39 71.5 61t90.5 22q49 0 91.5-22t70.5-61q13-17 30.5-27t36.5-10h131q34 0 57 23t23 57v160H640v-91q-35 25-75.5 38T480-200q-43 0-84-13.5T320-252v92H40Zm120-280q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T280-560q0 50-34.5 85T160-440Zm640 0q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T920-560q0 50-34.5 85T800-440Z"/></svg>
-                    <span>Exchange Request</span>
+                    <span>Exchange</span>
                 </a>
             </li>
             <li>
@@ -73,7 +75,7 @@
                         <path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40ZM480-820q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-820ZM440-240h80v-80h-80v80Zm0-160h80v-240h-80v240Z"/>
                       </svg>
                       
-                    <span>Pending Returns</span>
+                    <span>Pending Return</span>
                 </a>
             </li>
 
@@ -125,7 +127,7 @@
                 </a>
         </div>-->
         <div id="profile">
-            <img src="Images/pro2.jpg" class="user-pic" onclick="toggleMenu()">
+            <img src="Images/pro2.jpg" class="user-pic">
             <div class="sub-menu-wrap" id="submenu">
                 <div class="sub-menu">
                     <div class="user-info">
@@ -139,19 +141,22 @@
                             <path
                                 d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z" />
                         </svg>
-                        <p>User Profile</p>
+                        <p>Edit Profile</p>
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#5f6368">
                             <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
                         </svg>
                     </a>
-                    <a href="" class="sub-menu-link" target="content-frame">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    <a href="manual.html" class="sub-menu-link" target="content-frame">
+                      <!--  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#5f6368">
                             <path
                                 d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
                         </svg>
-                        <p>Settings & Privacy</p>
+                       <p>Settings & Privacy</p>-->
+                       <i class="fas fa-info-circle"></i> &nbsp;
+                       <p>Help & Support</p>
+
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                             fill="#5f6368">
                             <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
@@ -201,6 +206,8 @@
         const Sidebar = document.getElementById('sidebar');
         const header = document.querySelector('header');
         const submenu = document.getElementById('submenu');
+        const submenuLinks = document.querySelectorAll(".sub-menu-link");
+        const profileImage = document.querySelector(".user-pic");
         const iframeContent = document.getElementsByClassName('iframe-content')
 
 
@@ -209,9 +216,9 @@
       
 function toggleSidebar() {
     sidebar.classList.toggle('close'); 
-    header.classList.toggle('collapsed'); 
+   // header.classList.toggle('collapsed'); 
     iframeContent.classList.toggle('expand');
-    // Remove "show" class and "rotate" from dropdown items in the sidebar
+   
     Array.from(sidebar.getElementsByClassName('show')).forEach(ul => {
         ul.classList.remove('show');
         ul.previousElementSibling.classList.remove('rotate');
@@ -219,12 +226,57 @@ function toggleSidebar() {
 }
 
 
+document.addEventListener("DOMContentLoaded", function () {
+    const profileImage = document.querySelector(".user-pic");
+    const submenu = document.getElementById("submenu");
+    const submenuLinks = document.querySelectorAll(".sub-menu-link");
+    const iframe = document.querySelector(".iframe-content");
 
+    function toggleMenu(event) {
+        event.stopPropagation();
+        submenu.classList.toggle("open");
+    }
 
-        function toggleMenu() {
-            submenu.classList.toggle('open');
+    profileImage.addEventListener("click", function (event) {
+        toggleMenu(event);
+    });
+
+    // Close submenu when clicking outside, including header, sidebar, and iframe
+    document.addEventListener("click", function (event) {
+        if (!submenu.contains(event.target) && !profileImage.contains(event.target)) {
+            submenu.classList.remove("open");
         }
+    });
 
+    // Close submenu when clicking any submenu link
+    submenuLinks.forEach(link => {
+        link.addEventListener("click", function () {
+            submenu.classList.remove("open");
+        });
+    });
+
+    // Detect clicks inside the iframe and close the submenu
+    iframe.addEventListener("load", function () {
+        iframe.contentWindow.document.addEventListener("click", function () {
+            submenu.classList.remove("open");
+        });
+    });
+
+
+    
+    profileImage.addEventListener("touchstart", function (event) {
+        event.preventDefault(); 
+        toggleMenu(event);
+    });
+});
+
+   
+
+
+
+
+
+        
 
         const menuItems = document.querySelectorAll('.menu-item');
 

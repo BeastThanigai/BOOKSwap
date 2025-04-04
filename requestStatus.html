@@ -41,8 +41,8 @@
           color: #666;
         }
         .status-pending { color: orange; }
-        .status-accept { color: green; }
-        .status-reject { color: red; }
+        .status-accepted { color: green; }
+        .status-rejected { color: red; }
 
         .cancel-btn {
           background-color: #ff4b5c;
@@ -56,6 +56,72 @@
         .cancel-btn:hover {
           background-color: #e04350;
         }
+        /* 📱 Mobile & Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        max-width: 75%; /* Make it fit smaller screens */
+        margin: 10px auto;
+        margin-left: 100px;
+        padding: 12px;
+    }
+
+    h1 {
+        margin: 20px;
+        font-size: 22px; 
+    }
+
+    .request-item {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+
+    .request-item h3 {
+        font-size: 16px;
+    }
+
+    .request-item p {
+        font-size: 14px;
+    }
+
+    .cancel-btn {
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+}
+
+/* 📱 Mobile View (Max 480px) */
+@media (max-width: 480px) {
+    .container {
+        max-width: 65%; /* Slightly increase width for mobile */
+        padding: 19px; 
+        margin-left: 18%;
+    }
+
+    h1 {
+        font-size: 15px; /* Slightly smaller title */
+        margin-left: 15%;
+    }
+
+    .request-item {
+        padding: 8px;
+        margin-bottom: 5px;
+    }
+
+    .request-item h3 {
+        font-size: 15px;
+    }
+
+    .request-item p {
+        font-size: 13px;
+    }
+
+    .cancel-btn {
+        padding: 6px 9px;
+        font-size: 11px;
+        width: 100%; /* Full width for easier tapping */
+    }
+}
+
       </style>
 </head>
 <body>
@@ -97,7 +163,7 @@ get(profileRef).then((profileSnap) => {
             if (snapshot.exists()) {
                 const requests = snapshot.val();
                 const userRequests = Object.keys(requests).map(key => ({ id: key, ...requests[key] }))
-                    .filter(req => req.requestedBy === userName);
+                .filter(req => req.requestedBy === userName && req.status !== "completed");
 
                 if (userRequests.length === 0) {
                     requestList.innerHTML = "<p>No exchange requests found.</p>";
@@ -109,6 +175,7 @@ get(profileRef).then((profileSnap) => {
                     const bookName = bookSnap.exists() && bookSnap.val().title ? bookSnap.val().title : 'Unknown Book';
 
                     const requestedToName = req.requestedTo;
+                    const isCancelable = req.status === "pending";
                    // const requestedByName = req.requestedBy;
 
                     const requestItem = document.createElement("div");
@@ -116,10 +183,9 @@ get(profileRef).then((profileSnap) => {
                     requestItem.innerHTML = `
                        
                         <p><strong>Book Name:</strong> ${bookName}</p>
-                        
                         <p><strong>Requested To:</strong> ${requestedToName}</p>
                         <p><strong>Status:</strong> <span class="status-${req.status}">${req.status}</span></p>
-                        <button class="cancel-btn" data-id="${req.id}">Cancel Request</button>
+                       ${isCancelable ? `<button class="cancel-btn" data-id="${req.id}">Cancel Request</button>` : ""}
                     `;
                     requestList.appendChild(requestItem);
                 }

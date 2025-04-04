@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - BookSwap</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #162938, #1f4068);
+    color: #fff;
+    padding: 20px;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.heading {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.text {
+    flex: 1;
+    text-align: left;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.image img {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.back-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1em;
+    font-weight: 600;
+    color: #fff;
+    background: #ff6600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #ff4500;
+}
+
+/* 🔹 Responsive Design 🔹 */
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .text {
+        text-align: center;
+    }
+    .image img {
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+    .heading {
+        font-size: 2em;
+    }
+    .text {
+        font-size: 1em;
+    }
+    .back-btn {
+        font-size: 0.9em;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="heading">About Us</h1>
+
+        <div class="content">
+            <div class="text">
+                <p>Welcome to <strong>BookSwap</strong>, a platform where readers can exchange books easily with fellow book lovers. 
+                   Our mission is to create a community where knowledge flows freely, making books accessible to everyone.</p>
+                   <br>
+                <p>Whether you're looking for rare editions, educational materials, or just a good read, 
+                   BookSwap ensures seamless book-sharing with trusted members.</p>
+
+                <p>Join us today and be part of a reading revolution!</p>
+            </div>
+
+            <div class="image">
+                <img src="imageBook\book7.jpg" alt="BookSwap Platform">
+            </div>
+        </div>
+
+        <button class="back-btn" onclick="goBack()">⬅ Back</button>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
+</body>
+</html>

@@ -33,6 +33,7 @@ export function addNotification(userId, senderId, bookId, message) {
 }
 
 
+/*
 export function fetchNotifications(userId) {
     if (!userId) {
         console.error("User ID is missing while fetching notifications.");
@@ -155,6 +156,146 @@ function markAsRead(userId, notificationKey) {
 }
 
 // Authentication listener to get logged-in user
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        fetchNotifications(user.uid);
+    } else {
+        alert("Please log in first.");
+    }
+});
+*/
+
+document.addEventListener("DOMContentLoaded", function () {
+    const backButton = document.getElementById("closeNotificationPanel");
+
+    if (backButton) {
+        backButton.addEventListener("click", function () {
+            window.history.back(); // Navigate to the previous page
+        });
+    } else {
+        console.error("Back button not found.");
+    }
+});
+
+export function fetchNotifications(userId) {
+    if (!userId) {
+        console.error("User ID is missing while fetching notifications.");
+        return;
+    }
+
+    const notificationRef = ref(db, `notifications/${userId}`);
+
+    get(notificationRef)
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const notifications = snapshot.val();
+                console.log("Fetched notifications:", notifications);
+                displayNotifications(userId, notifications);
+            } else {
+                console.log("No notifications found.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching notifications:", error);
+        });
+}
+
+function displayNotifications(userId, notifications) {
+    const notificationContainer = document.getElementById("notificationList");
+    notificationContainer.innerHTML = ""; // Clear previous notifications
+
+    let allNotifications = [];
+
+    // Convert notifications object to array for sorting
+    Object.entries(notifications).forEach(([key, notification]) => {
+        allNotifications.push({ key, ...notification });
+    });
+
+    // Sort: Unread notifications first, then read
+    allNotifications.sort((a, b) => (a.read === b.read ? 0 : a.read ? 1 : -1));
+
+    allNotifications.forEach((notification) => {
+        let listItem = document.createElement("div");
+        listItem.style.display = "flex";
+        listItem.style.alignItems = "center";
+        listItem.style.padding = "10px";
+        listItem.style.borderBottom = "1px solid #ddd";
+
+        // Fetch sender profile image
+        get(ref(db, `profiles/${notification.senderId}`)).then((profileSnap) => {
+            let profilePicUrl = profileSnap.exists() ? profileSnap.val().profileImage : "default-profile.png";
+
+            let profileImg = document.createElement("img");
+            profileImg.src = profilePicUrl;
+            profileImg.style.width = "40px";
+            profileImg.style.height = "40px";
+            profileImg.style.borderRadius = "50%";
+            profileImg.style.marginRight = "10px";
+
+            listItem.appendChild(profileImg);
+        });
+
+        // Notification message
+        let messageText = document.createElement("span");
+        messageText.textContent = notification.message;
+        messageText.style.fontWeight = notification.read ? "normal" : "bold"; // Bold if unread
+        listItem.appendChild(messageText);
+
+        // Fetch book image
+        get(ref(db, `books/${notification.bookId}`)).then((bookSnap) => {
+            let bookImgUrl = bookSnap.exists() ? bookSnap.val().image : "default-book.png";
+
+            let bookImg = document.createElement("img");
+            bookImg.src = bookImgUrl;
+            bookImg.style.width = "50px";
+            bookImg.style.height = "50px";
+            bookImg.style.marginLeft = "auto";
+            listItem.appendChild(bookImg);
+        });
+
+        notificationContainer.appendChild(listItem);
+    });
+}
+
+// Function to mark all notifications as read when user closes panel
+function markAllAsRead(userId, notifications) {
+    if (!userId || !notifications) return;
+
+    let updates = {};
+    Object.keys(notifications).forEach((key) => {
+        updates[`notifications/${userId}/${key}/read`] = true;
+    });
+
+    update(ref(db), updates)
+        .then(() => {
+            console.log("All notifications marked as read.");
+        })
+        .catch((error) => {
+            console.error("Error marking notifications as read:", error);
+        });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const closeButton = document.getElementById("closeNotificationPanel");
+
+    if (closeButton) {
+        closeButton.addEventListener("click", () => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    get(ref(db, `notifications/${user.uid}`)).then((snapshot) => {
+                        if (snapshot.exists()) {
+                            markAllAsRead(user.uid, snapshot.val());
+                        }
+                    });
+                }
+            });
+        });
+    } else {
+        console.error("closeNotificationPanel button not found.");
+    }
+});
+
+// Authentication listener to fetch notifications
 onAuthStateChanged(auth, (user) => {
     if (user) {
         fetchNotifications(user.uid);

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>welcome</title>
     <style>
+      /*
         .dashboard-content {
           padding: 2rem;
           text-align: center;
@@ -42,7 +43,90 @@
       
         .browse-books-btn:hover {
           background-color: #0056b3;
-        }
+        }*//* Prevent X-Axis Scroll */
+html, body {
+    width: 100%;
+    overflow-x: hidden; /* Hides horizontal scrolling */
+    overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* Make dashboard content fully responsive */
+.dashboard-content {
+    padding: 2rem;
+    text-align: center;
+    background: transparent;
+    backdrop-filter: blur(20px);
+    margin-left: 230px;
+    margin-top: 160px; 
+    height: auto;
+    width: 100%;
+    max-width: 1000px;
+    scrollbar-width: none;
+    box-sizing: border-box; /* Ensures padding doesn’t cause overflow */
+}
+
+/* Ensure sections don’t exceed the screen width */
+.welcome-section h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: black;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.welcome-section p {
+    font-size: 1rem;
+    color: black;
+    margin-bottom: 1.5rem;
+    padding: 0 10px;
+    max-width: 100%;
+}
+
+/* Responsive Button */
+.browse-books-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: auto;
+}
+
+.browse-books-btn:hover {
+    background-color: #0056b3;
+}
+
+
+@media screen and (max-width: 768px) {
+    .dashboard-content {
+        margin-left: 65px;
+        margin-right: 50px;
+        margin-top: 150px;
+        width: 90%;
+        padding: 1.5rem;
+        overflow: hidden;
+        
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .dashboard-content {
+        margin-top: 80px;
+        margin-left: 56.5px;
+        width: 80%;
+        padding: .8rem;
+        scrollbar-width: none;
+    }
+    .browse-books-btn {
+        width: 100%;
+    }
+}
+
       </style>
       
 </head>

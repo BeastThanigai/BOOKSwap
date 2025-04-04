@@ -5,111 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Book</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-           
-        }
 
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-               
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+.container {
+    max-width: 700px;
+    margin: 20px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    box-sizing: border-box;
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
 
-        label {
-            font-size: 14px;
-            color: #302626;
-            margin-bottom: 5px;
-            display: block;
-        }
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 2rem;
+}
 
-        input[type="text"], input[type="file"], select, textarea {
-            width: 650px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
 
-        textarea {
-            height: 100px;
-        }
+form {
+    display: flex;
+    flex-direction: column;
+}
 
-        .form-group img {
-            max-width: 100%;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+.form-group {
+    margin-bottom: 20px;
+}
 
-        #btnsubmit, #btncancel{
-            width: 100%;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        #btnsubmit{
-            background-color: black;
-           
-        }
-        #btncancel{
-            background-color: black;
-           
-        }
+label {
+    font-size: 14px;
+    color: #302626;
+    margin-bottom: 5px;
+    display: block;
+}
 
-        #btnsubmit:hover, #btncancel:hover {
-            background-color:dimgray;
-        }
 
-        .terms-box {
-            background: #ffefef;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #d9534f;
-            margin-bottom: 10px;
-        }
+input[type="text"],
+input[type="file"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
 
-        .terms-box strong {
-            color: #b71c1c;
-        }
-        
-        .terms-box a {
-            color: #b71c1c;
-            text-decoration: underline;
-        }
-        /* Responsive Design */
+textarea {
+    height: 100px;
+}
+
+
+.form-group img {
+    max-width: 100%;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+#btnsubmit, #btncancel {
+    width: 100%;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: black;
+}
+
+#btnsubmit:hover, #btncancel:hover {
+    background-color: dimgray;
+}
+
+
+.terms-box {
+    background: #ffefef;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #d9534f;
+    margin-bottom: 10px;
+}
+
+.terms-box strong {
+    color: #b71c1c;
+}
+
+.terms-box a {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+
 @media screen and (max-width: 768px) {
     .container {
-        width: 90%;
+        width: 80%;
         padding: 15px;
+        margin-left: 110px;
+        
+    }
+
+    h2 {
+        font-size: 1.8rem;
     }
 
     input[type="text"],
@@ -117,30 +130,56 @@
     select,
     textarea {
         width: 100%;
+        font-size: 14px;
+    }
+
+    #btnsubmit,
+    #btncancel {
+        font-size: 14px;
     }
 }
 
 @media screen and (max-width: 480px) {
+    
+    .container {
+        width: 80%;  
+        padding: 8.5px;
+        margin-left:55px; 
+        overflow-x: hidden; 
+        overflow-y: auto; 
+    }
+
+
+    body {
+        overflow-x: hidden; 
+        overflow-y: auto; 
+    }
+
     h2 {
-        font-size: 18px;
+        font-size: 1.5rem;
+        text-align: center;
     }
 
     label {
         font-size: 12px;
     }
 
+   
     input[type="text"],
     input[type="file"],
     select,
     textarea {
         font-size: 12px;
         padding: 8px;
+        width: 100%; 
+        box-sizing: border-box; 
     }
 
     #btnsubmit,
     #btncancel {
         font-size: 14px;
-        padding: 8px;
+        padding: 10px;
+        width: 100%; 
     }
 
     .terms-box {
@@ -148,6 +187,9 @@
         padding: 8px;
     }
 }
+
+
+
     </style>
 </head>
 <body>
@@ -197,13 +239,14 @@
                 <br>
                 <strong>Prohibited Books:</strong> Pirated e-books, scanned copies, or any copyrighted material.
                 <br><br>
-                Read our <a href="#">Terms and Conditions</a> for details.
+                Read our <a href="terms.html">Terms and Conditions</a> for details.
             </div>
 
             <!-- Terms & Conditions Checkbox -->
             <div class="form-group">
-                <input type="checkbox" id="termsCheckbox">
-                <label for="termsCheckbox">I agree to the <a href="#">Terms and Conditions</a>.</label>
+                
+                <label for="termsCheckbox">
+                    <input type="checkbox" id="termsCheckbox">I agree to the <a href="terms.html">Terms and Conditions</a>.</label>
             </div>
     
             <button type="submit" id="btnsubmit">Add Book</button>

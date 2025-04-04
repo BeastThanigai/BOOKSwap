@@ -28,6 +28,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            margin-top: 5%;
         }
 
         .feedback-header {
@@ -87,6 +88,33 @@
         .submit-btn:hover {
             background-color: #0056b3;
         }
+        @media (max-width: 768px){
+            .feedback-container {
+                width: 77%;
+                padding:18px;
+                margin-left:7%;
+            }
+        }
+        @media(max-width:480px){
+            body {
+        justify-content: flex-start; /* Push content towards the top */
+        height: auto; /* Allow body to expand instead of forcing full height */
+        padding-top: 50px; /* Add some space from the top */
+    }
+            .feedback-container {
+                width: 68%;
+                padding:15px;
+                margin-left:10%;
+                margin-top: 10%;
+            }
+            .feedback-input {
+            width: 88%;
+            padding: 10px;
+            margin-top: 10px; 
+        }
+       
+        }
+  
     </style>
 </head>
 <body>

@@ -23,6 +23,57 @@
     .dialog-box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; }
     .dialog-box p { margin-bottom: 20px; }
     .dialog-box button { margin: 5px; padding: 10px 20px; cursor: pointer; }
+
+    /* 📌 Tablet (768px) */
+@media (max-width: 768px) {
+    .request-list {
+        max-width: 85%;
+        margin-left: 11%;
+        
+    }
+
+    .request-item {
+        padding: 15px;
+        font-size: 15px;
+    }
+
+    .button-container {
+        justify-content: center; /* Keep buttons centered */
+    }
+
+    .accept-btn, .reject-btn {
+        min-width: 90px;
+        padding: 10px;
+    }
+}
+
+/* 📌 Mobile Phones (480px and smaller) */
+@media (max-width: 480px) {
+    h1{
+        margin-left: 13%;
+    }
+    .request-list {
+        max-width: 95%;
+        padding: 0 8px;
+        margin-left: 10%;
+    }
+
+    .request-item {
+        padding: 12px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .button-container {
+        flex-wrap: wrap; /* Prevents buttons from stacking */
+        justify-content: center;
+    }
+
+    .accept-btn, .reject-btn {
+        min-width: 80px; /* Smaller buttons for a better fit */
+        padding: 7px 11px;
+    }
+}
 </style>
     
 </head>
@@ -82,7 +133,13 @@ get(profileRef).then((profileSnap) => {
                 const requests = snapshot.val();
                 const receivedRequests = Object.entries(requests)
                     .map(([key, value]) => ({ id: key, ...value }))
-                    .filter(req => req.requestedTo === userName);
+                    .filter(req => 
+                req.requestedTo === userName && 
+                req.bookReturn !== "returned" && 
+                req.status !== "completed" &&
+                req.status !== "rejected" 
+            );
+
 
                 if (receivedRequests.length === 0) {
                     requestList.innerHTML = "<p>No exchange requests received.</p>";
@@ -171,6 +228,8 @@ cancelBtn.addEventListener('click', () => {
     dialog.style.display = 'none';
     currentAction = null;
 });
+
+
 confirmBtn.addEventListener('click', async () => {
     if (!currentAction) return;
 
@@ -202,6 +261,10 @@ confirmBtn.addEventListener('click', async () => {
             
             await set(ref(db, `books/${bookId}/status`), "Borrowed");
 
+            const dueDate = new Date();
+            dueDate.setDate(dueDate.getDate() + 14);
+            await set(ref(db, `exchange_requests/${id}/dueDate`), dueDate.getTime());
+
             // Send notification to requester
             const notificationMessage = `Your request for the book has been accepted by ${ownerName}.`;
             addNotification(requestedById, ownerId, bookId, notificationMessage);
@@ -222,30 +285,47 @@ confirmBtn.addEventListener('click', async () => {
                 
                 await set(ref(db, `exchange_requests/${id}/status`), "rejected");
 
-                
+                await set(ref(db, `exchange_requests/${id}/bookHandover`), "pending");
                 const notificationMessage = `Your accepted request for the book has been revoked by ${ownerName}. The book is now available again.`;
                 addNotification(requestedById, ownerId, bookId, notificationMessage);
                 
                 alert("Request status changed back to Rejected. The book is now available again.");
-            } else {
+                 // ✅ Remove request from the UI after rejection
+                 setTimeout(() => {
+        const rejectedRequest = document.getElementById(`request-${id}`);
+        if (rejectedRequest) {
+            rejectedRequest.remove(); // Remove from UI
+            renderedRequests.delete(id); // Remove from the set
+        }
+    }, 300); // Small delay to prevent UI flickering
+        }
+             else {
                 
                 await set(ref(db, `exchange_requests/${id}/status`), "rejected");
-
+                await set(ref(db, `exchange_requests/${id}/bookHandover`), "pending");
                
                 const notificationMessage = `Your request for the book has been rejected by ${ownerName}.`;
                 addNotification(requestedById, ownerId, bookId, notificationMessage);
 
                 alert("Request rejected.");
-            }
 
-            
+      
+
             const statusLabel = document.querySelector(`#request-${id} .status-label`);
             if (statusLabel) {
                 statusLabel.textContent = `Status: rejected`;
             }
+            setTimeout(() => {
+        const rejectedRequest = document.getElementById(`request-${id}`);
+        if (rejectedRequest) {
+            rejectedRequest.remove(); // Remove from UI
+            renderedRequests.delete(id); // Remove from the set
         }
-
-    } catch (error) {
+    }, 300); 
+        }
+    }
+    }
+     catch (error) {
         console.error("Error processing request:", error);
         alert("An error occurred while processing the request. Please try again.");
     }

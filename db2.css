@@ -59,9 +59,12 @@ body{
     backdrop-filter: blur(27px);
     overflow-y: auto;
     scrollbar-width: none;
+
+    transition: width 0.3s ease;
+    z-index: 1000; 
 }
 .sidebar::-webkit-scrollbar {
-    display: none; /* Hide scrollbar*/
+    display: none; 
 }
 #sidebar ul{
     list-style: none;
@@ -100,14 +103,6 @@ body{
     display: flex;
     align-items: center;
     gap: 1em;
-}
-.dropdown-btn{
-    width: 100%;
-    text-align: left;
-    background: none;
-    border:none;
-    font:inherit;
-    cursor:pointer;
 }
 
 
@@ -150,10 +145,10 @@ body{
 
 #toggle-btn{
     margin-left: auto;
-    padding: 1em;
+    padding: .5em;
     background: none;
     border: none;
-    border-radius: .5em;
+    border-radius: .4em;
     cursor: pointer;
 }
 #toggle-btn:hover{
@@ -180,22 +175,24 @@ header {
    top:5px;
    left:65px;
    width: 1467px;
-    z-index: 1000;
+    z-index: 900;
     transition: 300ms ease-in-out;
 
 }
+/*
 header.collapsed{
-  /* padding: (25px, 7%);
+  padding: (25px, 7%);
    position: fixed;
    top:5px;
    left:65px;
-   width: 1467px;*/
+   width: 1467px;
    padding: 0 20px;
    position: fixed;
     left: 225px;
     top:5px;
     width: 1310px
 }
+*/
 
 header h2 {
     font-size: 28px;
@@ -251,16 +248,19 @@ header #profile {
 }
 
 .sub-menu-wrap{
+    display: none; /* Hide initially */
     position: absolute;
     top:100%;
-    right:0px;
+    right:10px;
     width: 260px;
-    max-height: 0px;
+    max-height: 400px;
     overflow: hidden;
     transition: max-height 0.5s;
+    z-index: 9999;
 }
 .sub-menu-wrap.open{
-    max-height: 400px;
+    /*max-height: 400px;*/
+    display: block !important;
 }
 .sub-menu{
     background: transparent;
@@ -330,4 +330,223 @@ header #profile {
    
     transition: 300ms ease-in-out;
   }
-  
+
+
+
+
+
+
+
+  /* 📱 Tablet Size (Max 768px) */
+@media screen and (max-width: 768px) {
+    body {
+        flex-direction: column;
+        overflow: auto;
+    }
+
+    #sidebar {
+        width: 50px; 
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 2px; /* Reduce padding */
+    }
+
+    #sidebar.close {
+        width: 200px;
+    }
+
+    #sidebar span {
+        font-size: 14px; /* Reduce text size */
+        padding-left: 5px; /* Adjust spacing */
+    }
+    #sidebar > ul > li:first-child{
+        margin-bottom: 10px;
+        .logo{
+            font-weight: 450;
+            font-size:medium;
+        }
+    }
+    
+    #sidebar a, #sidebar .dropdown-btn, #sidebar .logo{
+        border-radius: 13px;
+        padding: .76em;
+        gap: 1em;
+    }
+    
+    
+
+    header {
+        padding: 0 10px;
+        left: 50px;
+        height: 50px;
+        width: calc(100% - 50px);
+        justify-content:space-between;
+    }
+
+  /*  header.collapsed {
+        left: 150px;
+        width: calc(100% - 150px);
+        padding: 0px 10px;
+    
+    }*/
+
+    .search-bar {
+        position: absolute;
+        top: 50%;
+        left:80%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+    }
+
+    .search-bar input {
+        margin-top: 3px;
+        height: 30px;
+        width: 50%;
+        font-size: 12px;
+        padding: 5px;
+    }
+
+    .search-bar button {
+        margin-top: 3px;
+        padding: 2px;
+        font-size: 10px;
+        height: 30px;
+        width: 50px;
+    }
+
+   
+    .iframe-content {
+        margin-left: 0;
+        width: 100%;
+        height: calc(100vh - 75px);
+    }
+
+    .user-pic {
+        width: 30px;
+        margin-right: 3px;
+    }
+
+    .sub-menu-wrap {
+        right: 0px; 
+        width: 250px;
+        z-index: 2000;  
+    }
+    .sub-menu {
+        padding: 15px;
+    }
+    
+}
+@media screen and (max-width:560px)
+{
+    .search-bar{
+        left:72%;
+    }
+    header{
+        height: 50px;
+    }
+}
+
+
+@media screen and (max-width: 480px) {
+    body {
+        flex-direction: column;
+        overflow: auto;
+    }
+    #sidebar {
+        width: 45px;
+        position: fixed;
+        top:0px;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 2px;
+        z-index: 2000;
+        
+    }
+
+    #sidebar.close {
+        width: 170px;
+    }
+
+    #sidebar span {
+        font-size: 12px;
+        padding-left: 3.5px;
+        font-weight: bold;
+    }
+    #sidebar > ul > li:first-child{
+        margin-bottom: 8px;
+        .logo{
+            font-weight: 400;
+        }
+    }
+    #sidebar a, #sidebar .dropdown-btn, #sidebar .logo{
+        border-radius: 10px;
+        padding: .66em;
+        gap: .5em;
+    }
+   
+    header {
+        top:0px;
+        left: 45px;
+        height: 45px;
+        width: calc(100% - 45px);
+        padding: 0 10px;
+        z-index: 100;
+    }
+
+    
+
+    header h2 {
+        font-size: 15px; 
+    }
+
+    .search-bar {
+        position: absolute;
+        top: 50%;
+        left:63%;
+        transform: translate(-50%, -50%);
+        width: 40%;
+    }
+
+    .search-bar input {
+        margin-top: 3.5px;
+        height: 20px;
+        width: 65%;
+        font-size: 10px;
+        padding: 3px;
+    }
+
+    .search-bar button {
+        margin-top: 3.5px;
+        padding: 2px;
+        font-size: 9px;
+        height: 20px;
+        width: 40px;
+    }
+
+    .iframe-content {
+        margin-left: 0;
+        width: 100%;
+        height: calc(100vh - 70px);
+    }
+
+    .user-pic {
+        margin-top: 1.5px;
+        width: 25px;
+        margin-right: 8px;
+    }
+
+    .sub-menu {
+        padding: 5px;
+    }
+
+    .sub-menu-link p {
+        font-size: 10px;
+    }
+    .sub-menu-wrap {
+        right: 3px; 
+        top:40px;
+        width: 70%;
+        z-index: 2000;
+    }
+}

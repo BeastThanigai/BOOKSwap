@@ -12,14 +12,11 @@
         <h2 class="name">Book Swap</h2>
         <nav class="navigation">
             <a href="">Admin</a>
-            <a href="">About</a>
-            <a href="">Contact</a>
+            <a href="aboutUS.html">About</a>
+            <a href="contact.html">Contact</a>
         </nav>
     </header>
     <div class="wrapper">
-        <span class="icon-close">
-            <ion-icon name="close"></ion-icon>
-        </span>
         <div class="form-box login">
             <h2>Login</h2>
             <form action="#">
@@ -65,15 +62,14 @@
                 </div>
                 <div class="input-box">
                     <span class="icon"><ion-icon name="eye"></ion-icon></span>
-                    <input type="password" required>
+                    <input id="password" type="password" required>
                     <span class="icon"><ion-icon name="eye"></ion-icon></span> 
                    
                     <label>Password</label>
                 </div>
                 <div class="remember-forgot">
                     <label>
-                        <input type="checkbox">
-                        I agree to the  1terms & conditions
+                        <input type="checkbox" id="uploadTermsCheckbox">I agree to the<a href="terms.html">terms and conditions</a>
                     </label>
                     
                 </div>
@@ -119,66 +115,6 @@
     <script type="module" src="https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js"></script>
     <script type="module" src="register.js" defer></script>
     <script>
-      /*  const wrapper = document.querySelector('.wrapper');
-        const loginLink = document.querySelector('.login-link')
-        const registerLink = document.querySelector('.register-link')
-        const btnPopup = document.querySelector('.btnlogin-popup')
-        const iconClose = document.querySelector('.icon-close')
-        const registerForm = document.querySelector('.form-box.register form');
-        const loginForm = document.querySelector('.form-box.login form');
-        const forgotLink = document.querySelector('.remember-forgot a');
-        const forgotFormWrapper = document.querySelector('.wrapper');
-        const loginLinkForgot = document.querySelector('.forgot .login-link'); 
-
-
-        registerLink.addEventListener('click',() => {
-            wrapper.classList.add('active');
-        })
-
-        loginLink.addEventListener('click',() => {
-            wrapper.classList.remove('active');
-        })
-
-
-
-        forgotLink.addEventListener('click', () => {
-     forgotFormWrapper.classList.add('active-forgot');
-     wrapper.classList.remove('active');     
-     
-        });
-
-    loginLink.addEventListener('click', () => {
-    forgotFormWrapper.classList.remove('active-forgot');
-    forgotFormWrapper.classList.remove('active'); 
-    });
-
-    registerLink.addEventListener('click', () => {
-    forgotFormWrapper.classList.add('active');
-    forgotFormWrapper.classList.remove('active-forgot');
-    });
-       
-    loginLinkForgot.addEventListener('click', () => {
-    forgotFormWrapper.classList.remove('active-forgot'); 
-    forgotFormWrapper.classList.remove('active'); 
-    //forgotFormWrapper.classList.add('active');
-    loginForm.reset();
-});
-
-    
-        btnPopup.addEventListener('click',() => {
-            wrapper.classList.add('active-popup');
-            wrapper.classList.remove('active-forgot');  
-            wrapper.classList.remove('active');
-        })
-
-        iconClose.addEventListener('click',() => {
-            wrapper.classList.remove('active-popup');
-            registerForm.reset();
-            loginForm.reset();
-            
-        })
-
-*/
 const wrapper = document.querySelector('.wrapper');
 const loginLink = document.querySelectorAll('.login-link'); // Use querySelectorAll for multiple occurrences
 const registerLink = document.querySelector('.register-link');
@@ -190,41 +126,32 @@ const forgotLink = document.querySelector('.remember-forgot a');
 const forgotFormWrapper = document.querySelector('.wrapper');
 const loginLinkForgot = document.querySelector('.forgot .login-link');
 
-// Show login form by default on page load
+
 document.addEventListener('DOMContentLoaded', () => {
-    wrapper.classList.add('active-popup'); // Ensures login form is open
+    wrapper.classList.add('active-popup'); 
     wrapper.classList.remove('active');
     wrapper.classList.remove('active-forgot');
 });
 
-// Open Register form
+
 registerLink.addEventListener('click', () => {
-    wrapper.classList.add('active'); // Switch to register form
+    wrapper.classList.add('active'); 
     wrapper.classList.remove('active-forgot');
 });
 
-// Open Login form from Register or Forgot Password
+
 loginLink.forEach(link => {
     link.addEventListener('click', () => {
-        wrapper.classList.remove('active'); // Switch to login form
+        wrapper.classList.remove('active'); 
         wrapper.classList.remove('active-forgot');
-        loginForm.reset(); // Reset login form fields
+        loginForm.reset(); 
     });
 });
 
-// Open Forgot Password form
-forgotLink.addEventListener('click', () => {
-    wrapper.classList.add('active-forgot'); // Switch to forgot password
-    wrapper.classList.remove('active');
-});
 
-// Close popup and reset forms
-iconClose.addEventListener('click', () => {
-    wrapper.classList.remove('active-popup'); // Close popup
+forgotLink.addEventListener('click', () => {
+    wrapper.classList.add('active-forgot');
     wrapper.classList.remove('active');
-    wrapper.classList.remove('active-forgot');
-    registerForm.reset(); // Reset registration form fields
-    loginForm.reset(); // Reset login form fields
 });
 
 

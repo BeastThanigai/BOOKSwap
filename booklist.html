@@ -211,7 +211,7 @@
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
-/* Report Button - Red */
+
 .report-btn {
     background-color: #ff4d4d;
     color: white;
@@ -222,7 +222,7 @@
     transform: scale(1.05);
 }
 
-/* Review Button - Blue */
+
 .review-btn {
     background-color: #007BFF;
     color: white;
@@ -233,7 +233,7 @@
     transform: scale(1.05);
 }
 
-/* Centered Popup Styling */
+
 .review-popup {
     position: fixed;
     top: 50%;
@@ -248,7 +248,7 @@
     text-align: center;
 }
 
-/* Close Button */
+
 .review-popup button {
     margin: 10px 5px;
     padding: 8px 12px;
@@ -268,7 +268,7 @@
     color: white;
 }
 
-/* Star Rating Styling */
+
 .star-rating {
     display: flex;
     justify-content: center;
@@ -296,6 +296,174 @@
     color: gold;
 }
 
+@media (max-width: 1024px) {
+    .book-list {
+        max-width: 90%;
+    }
+
+    .book-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+        max-width: 600px; 
+
+    .book-image {
+        max-width: 180px; 
+    }
+
+    .book-details {
+        padding-left: 0;
+        font-size: 14px; 
+    }
+}
+}
+
+@media (max-width: 768px) {
+    .book-item {
+        max-width: 500px; 
+        padding: 12px;
+        margin-left: 80px;
+    }
+    h1{
+        margin-left:115px;
+    }
+    .view-more{
+        margin-left:50px;
+    }
+    .book-image {
+        max-width: 150px;
+    }
+
+    .book-actions button {
+        padding: 7px 10px;
+        font-size: 12px;
+        margin: 4px 2px;
+    }
+    .popup {
+        width: 400px; 
+        left: 55%; 
+    }
+
+    .popup-content {
+        padding: 20px; 
+    }
+
+   
+    .review-popup {
+        width: 300px; 
+        left: 55%; 
+        padding: 15px;
+    }
+
+    .review-popup button {
+        padding: 6px 10px;
+        font-size: 12px; 
+    }
+
+   
+    .popup-message {
+        left: 55%;
+        font-size: 16px; 
+        padding: 15px 30px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    body{
+        padding: 10px;
+    }  
+    .book-list{
+        margin-left:0px ;
+    }
+     h1{
+        margin-left:45px;
+        font-size: 20px;
+    }
+    .view-more{
+        margin-left:72px;
+        
+    }
+    .book-item {
+        max-width: 95%;
+        padding: 7px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .book-image {
+        max-width: 120px;
+    }
+
+    .book-details h3 {
+        font-size: 15px;
+    }
+
+
+    .book-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+        width: 100%;
+    }
+
+    .book-actions button {
+        padding: 6px 8px;
+        font-size: 10px;
+   /* flex: 1 1 32% !important;
+    max-width: 32% !important;*/
+}/*
+.book-actions button:nth-child(4),
+.book-actions button:nth-child(5) {
+    flex: 1 1 48% !important;
+    max-width: 48% !important;
+}*/
+
+   
+    .popup {
+        width: 55%; 
+        left: 55%; 
+        padding: 15px;
+    }
+
+    .popup-content {
+        padding: 7px;
+        font-size: 11px;
+    }
+
+    
+    .review-popup {
+        width: 200px; 
+        left: 55%;
+        padding: 10px;
+    }
+
+    .review-popup button {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+   
+    .popup-message {
+        left: 55%;
+        font-size: 12px;
+        padding: 10px 18px;
+    }
+    .close-popup{
+        top: 2px;
+        right: 10px;
+    }
+    .back-btn {
+        bottom:20%;
+        left:60px;
+    }   
+}
+
+
+
 
     </style>
 </head>
@@ -314,7 +482,7 @@
    <script type="module">
   
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, set, get, onValue, push, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    import { getDatabase, ref, set, get, onValue, push, update, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
     import { addNotification } from "./notification.js";
 
 
@@ -446,15 +614,15 @@ window.addEventListener('searchUpdated', () => {
 
 
 window.reportBook = function(bookId) {
-    const booksRef = ref(db, "books");  // Reference to all books
+    const booksRef = ref(db, "books");  
 
-    // Find the book by its bookId inside the child nodes
+    
     get(booksRef).then(snapshot => {
         if (snapshot.exists()) {
             let booksData = snapshot.val();
-            let bookKey = null;  // Store the Firebase key for the book
+            let bookKey = null; 
 
-            // Loop through books to find the matching bookId
+         
             Object.keys(booksData).forEach(key => {
                 if (booksData[key].id === bookId) {
                     bookKey = key;
@@ -467,22 +635,49 @@ window.reportBook = function(bookId) {
                 return;
             }
 
-            const bookRef = ref(db, `books/${bookKey}`);  // Correct Firebase key reference
+            const bookRef = ref(db, `books/${bookKey}`);  
             let bookData = booksData[bookKey];
             let currentCount = bookData.reportCount || 0;
-            let reportedBy = bookData.reportedBy || []; // Ensure array exists
+            let reportedBy = bookData.reportedBy || []; 
 
             if (reportedBy.includes(userId)) {
                 showErrorPopup("You have already reported this book. Action will be taken if multiple users report.");
                 return;
             }
 
-            // Update report count and add user to reportedBy array
+           
             reportedBy.push(userId);
+
+            let updatedReportCount = currentCount + 1;
+
+// ✅ Check if the report count exceeds 5
+if (updatedReportCount > 5) {
+    alert("🚨 This book has been reported too many times and will be removed from the platform.");
+
+    // ✅ Move the book to "removed_books/"
+    const removedBooksRef = ref(db, `removed_books/${bookKey}`);
+    set(removedBooksRef, bookData)
+        .then(() => {
+            // ✅ Remove the book from "books/"
+            remove(bookRef)
+                .then(() => {
+                    showSuccessPopup("🗑️ Book removed due to multiple reports.");
+                })
+                .catch(error => {
+                    console.error("❌ Error deleting book:", error);
+                    showErrorPopup("❌ Error deleting book: " + error.message);
+                });
+        })
+        .catch(error => {
+            console.error("❌ Error moving book to removed_books:", error);
+            showErrorPopup("❌ Error moving book: " + error.message);
+        });
+
+} else {
             update(bookRef, { reportCount: currentCount + 1, reportedBy })
                 .then(() => showSuccessPopup("Book reported successfully!"))
                 .catch(error => showErrorPopup("Error reporting book: " + error.message));
-        } else {
+        } }else {
             console.error("Books list not found in database.");
             showErrorPopup("Error fetching books data.");
         }
@@ -493,7 +688,6 @@ window.reportBook = function(bookId) {
 };
 
 
-// ✅ Open Review Popup
 window.openReviewPopup = function (bookId) {
     const reviewPopup = document.createElement("div");
     reviewPopup.className = "review-popup";
@@ -507,13 +701,15 @@ window.openReviewPopup = function (bookId) {
                 <input type="radio" name="rating" id="star2" value="2"><label for="star2">★</label>
                 <input type="radio" name="rating" id="star1" value="1"><label for="star1">★</label>
             </div>
-            <textarea id="reviewText" placeholder="Write your review (optional)"></textarea>
+            <textarea id="reviewText" placeholder="Write your review..."></textarea>
             <button onclick="submitReview('${bookId}')">Submit</button>
             <button onclick="closeReviewPopup()">Cancel</button>
         </div>
     `;
     document.body.appendChild(reviewPopup);
 }
+
+
 window.submitReview = function (bookId) {
     const reviewRating = document.querySelector('input[name="rating"]:checked')?.value;
     const reviewText = document.getElementById('reviewText').value.trim();
@@ -524,7 +720,7 @@ window.submitReview = function (bookId) {
         return;
     }
 
-    // Reference to the user's profile in the database
+   
     const userProfileRef = ref(db, `profiles/${userId}`);
 
     get(userProfileRef).then((userProfileSnapshot) => {
@@ -535,7 +731,7 @@ window.submitReview = function (bookId) {
 
         const userName = userProfileSnapshot.val().name;
 
-        // Reference to the exchange_requests node
+     
         const exchangesRef = ref(db, 'exchange_requests');
 
         get(exchangesRef).then((snapshot) => {
@@ -552,13 +748,13 @@ window.submitReview = function (bookId) {
                         const bookDocId = exchange.bookRequested;
                         const bookRef = ref(db, `books/${bookDocId}`);
 
-                        // Fetch the book details
+                        
                         get(bookRef).then((bookSnapshot) => {
                             if (bookSnapshot.exists()) {
                                 const book = bookSnapshot.val();
                                 if (book.id === bookId) {
                                     hasExchanged = true;
-                                    // Proceed to submit the review
+                                  
                                    submitReviewToDatabase(bookId, reviewRating, reviewText);
                                 }
                             }
@@ -586,29 +782,31 @@ window.submitReview = function (bookId) {
         showErrorPopup("Failed to retrieve user information.");
     });
 };
-window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {
-    const booksRef = ref(db, "books"); // Reference to all books
 
-    // Validate reviewRating
+
+window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {
+    const booksRef = ref(db, "books"); 
+
+   
     const rating = parseFloat(reviewRating);
     if (isNaN(rating) || rating < 0) {
         showErrorPopup("Invalid rating value.");
         return;
     }
 
-    // Ensure userId is defined
+    
     if (!userId) {
         showErrorPopup("User not identified. Please log in.");
         return;
     }
 
-    // Find the book by its bookId inside the child nodes
+    
     get(booksRef).then(snapshot => {
         if (snapshot.exists()) {
             const booksData = snapshot.val();
-            let bookKey = null; // Store the Firebase key for the book
+            let bookKey = null; 
 
-            // Loop through books to find the matching bookId
+          
             Object.keys(booksData).forEach(key => {
                 if (booksData[key].id === bookId) {
                     bookKey = key;
@@ -621,7 +819,7 @@ window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {
                 return;
             }
 
-            const bookRef = ref(db, `books/${bookKey}`); // Correct Firebase key reference
+            const bookRef = ref(db, `books/${bookKey}`); 
             const bookData = booksData[bookKey];
             const reviews = bookData.reviews || {};
             reviews[userId] = {
@@ -629,7 +827,7 @@ window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {
                 text: reviewText
             };
 
-            // Calculate the new average rating
+            
             const validRatings = Object.values(reviews)
                 .map(review => parseFloat(review.rating))
                 .filter(rating => !isNaN(rating));
@@ -638,7 +836,7 @@ window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {
             const reviewCount = validRatings.length;
             const avgRating = reviewCount > 0 ? totalRating / reviewCount : 0;
 
-            // Update the book's reviews and averageRating
+            
             update(bookRef, {
                 reviews: reviews,
                 averageRating: avgRating
@@ -784,7 +982,6 @@ function createPopup(message, backgroundColor, icon) {
     }, 3000);
 }
 
-
 window.requestExchange = function (bookID, ownerID, userId) {
     if (!userId) {
         alert("You must be logged in to request an exchange.");
@@ -796,7 +993,87 @@ window.requestExchange = function (bookID, ownerID, userId) {
         return;
     }
 
-    console.log("Requesting exchange for bookID:", bookID);
+     // ✅ First, check the user's total fine amount
+     const fineRef = ref(db, `profiles/${userId}/fine/totalFine/totalFine`);
+    get(fineRef).then((fineSnap) => {
+        if (fineSnap.exists()) {
+            const totalFine = fineSnap.val();
+            console.log(`🔍 User Fine: ${totalFine}`);
+
+            if (totalFine > 50) {
+                alert("❌ You cannot request an exchange as your total fine exceeds Rs. 50. Please clear your dues.");
+                return; // ✅ Stop further execution
+            }
+        }
+
+    // ✅ First, find the Firebase book ID corresponding to bookID (e.g., BOOK12)
+    const booksRef = ref(db, "books");
+
+    get(booksRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const books = snapshot.val();
+            let firebaseBookKey = null;
+
+            for (const key in books) {
+                if (books[key].id === bookID) {
+                    firebaseBookKey = key; // ✅ Get the unique Firebase book ID
+                    break;
+                }
+            }
+
+            if (!firebaseBookKey) {
+                alert("❌ Book not found.");
+                return;
+            }
+
+            console.log(`✅ Found Firebase Book Key: ${firebaseBookKey}`);
+
+            // ✅ Now check for existing pending exchange requests
+            checkExistingRequests(firebaseBookKey, ownerID, userId);
+        } else {
+            alert("📚 No books available.");
+        }
+    }).catch((error) => {
+        console.error("❌ Error fetching books:", error);
+    });}).catch((error) => {
+        console.error("❌ Error fetching fine details:", error);
+    });
+};
+
+function checkExistingRequests(firebaseBookKey, ownerID, userId) {
+    const exchangeRequestsRef = ref(db, "exchange_requests");
+
+    get(exchangeRequestsRef).then((snapshot) => {
+        if (snapshot.exists()) {
+            const requests = snapshot.val();
+
+           // console.log("🔥 All existing exchange requests:", requests);
+
+            const hasPendingRequest = Object.values(requests).some(request => {
+               // console.log(`Checking request: bookRequested=${request.bookRequested}, userId=${request.userId}, status=${request.status}`);
+
+                return (
+                    request.bookRequested === firebaseBookKey &&
+                    request.userId === userId &&
+                    request.status.toLowerCase() === "pending"
+                );
+            });
+
+            if (hasPendingRequest) {
+                alert("⏳ You have already requested this book. Waiting for owner's approval.");
+                return;
+            }
+        }
+
+        // ✅ No pending request, proceed with exchange
+        proceedWithExchangeRequest(firebaseBookKey, ownerID, userId);
+    }).catch((error) => {
+        console.error("❌ Error checking existing requests:", error);
+    });
+}
+
+function proceedWithExchangeRequest(firebaseBookKey, ownerID, userId) {
+    console.log("✅ Requesting exchange for Firebase Book ID:", firebaseBookKey);
 
     const booksRef = ref(db, "books");
 
@@ -804,17 +1081,10 @@ window.requestExchange = function (bookID, ownerID, userId) {
         .then((snapshot) => {
             if (snapshot.exists()) {
                 const books = snapshot.val();
-                let foundBook = null;
-
-                for (const key in books) {
-                    if (books[key].id === bookID) {
-                        foundBook = { key, ...books[key] };
-                        break;
-                    }
-                }
+                const foundBook = books[firebaseBookKey]; // ✅ Get the correct book using Firebase ID
 
                 if (foundBook) {
-                    console.log(`Exchange Request for: ${foundBook.title}, Status: ${foundBook.status}`);
+                    console.log(`📖 Exchange Request for: ${foundBook.title}, Status: ${foundBook.status}`);
 
                     if (!foundBook.status || foundBook.status.toLowerCase() !== "available") {
                         alert(`Sorry, "${foundBook.title}" is currently unavailable for exchange.`);
@@ -828,7 +1098,7 @@ window.requestExchange = function (bookID, ownerID, userId) {
                         get(ref(db, `profiles/${ownerID}`))
                     ]).then(([requestedBySnap, requestedToSnap]) => {
                         if (!requestedBySnap.exists() || !requestedToSnap.exists()) {
-                            alert("User profiles not found.");
+                            alert("❌ User profiles not found.");
                             return;
                         }
 
@@ -839,8 +1109,10 @@ window.requestExchange = function (bookID, ownerID, userId) {
 
                         set(exchangeRef, {
                             requestID: requestID,
-                            requestedBy: requestedByProfile.name,
-                            bookRequested: foundBook.key,  // This is the bookId
+                            userId: userId, // ✅ Stores borrower's user ID
+                            ownerId: ownerID,
+                            requestedBy: requestedByProfile.name, // ✅ Stores borrower's name
+                            bookRequested: firebaseBookKey, // ✅ Store Firebase book ID
                             requestedTo: requestedToProfile.name,
                             status: "pending",
                             bookHandover: "pending",
@@ -848,35 +1120,27 @@ window.requestExchange = function (bookID, ownerID, userId) {
                             timestamp: Date.now()
                         })
                             .then(() => {
-                                alert(`Exchange request for "${foundBook.title}" sent successfully!`);
+                                alert(`📌 Exchange request for "${foundBook.title}" sent successfully!`);
 
-                               
                                 const notificationMessage = `${requestedByProfile.name} requested an exchange for "${foundBook.title}".`;
-                                addNotification(ownerID, userId, foundBook.key, notificationMessage);
-
+                                addNotification(ownerID, userId, firebaseBookKey, notificationMessage);
                             });
                     });
                 } else {
-                    alert("Book not found.");
+                    alert("❌ Book not found.");
                 }
             } else {
-                alert("No books available.");
+                alert("📚 No books available.");
             }
         })
         .catch((error) => {
-            console.error("Error fetching books:", error);
+            console.error("❌ Error fetching books:", error);
         });
-};
-
-
-                     
+}
 
 function generateUniqueID() {
     return "req_" + Math.random().toString(36).substr(2, 9);
 }
-
-
-
 
 </script>
 

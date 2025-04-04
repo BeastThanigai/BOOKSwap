@@ -66,26 +66,7 @@ header{
     transform: scaleX(1)                    ;
 }
 
- .navigation .btnlogin-popup{
-    width: 130px;
-    height: 50px;
-    background: transparent;
-    border: 2px solid #fff;
-    outline: none;
-    border-radius: 6px;
-    font-size: 1.1em;
-    color: #fff;
-    font-weight: 500;
-    margin-left: 40px;
-    cursor: pointer;
-    transition: .5s;
- }
 
- .navigation .btnlogin-popup:hover{
-    background: #fff;
-    color: #162938;
-
- }
  .wrapper{
     position: relative;
    /* width: 400px;*/
@@ -113,7 +94,7 @@ header{
  }
  .wrapper .form-box{
     width: 100%;
-    padding: 40px;
+    padding: 32px;
  }
 
  .wrapper .form-box.login{
@@ -151,23 +132,7 @@ header{
    margin: -10px 0 20px;
    text-align: center;
 }
-.wrapper .icon-close{
-   position: absolute;
-   top:0;
-   right: 0;
-   width: 45px;
-   height: 45px;
-   background: #162938;
-   font-size: 2em;
-   color: #fff;
-   text-align: center;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   border-bottom-left-radius: 20px;
-   cursor: pointer;
-   z-index: 1;
-}
+
  .form-box h2{
     font-size: 2em;
     color: #162938;
@@ -306,43 +271,95 @@ header{
    }
 }
 
+.remember-forgot a{
+   text-decoration: underline;
+}
+
+.remember-forgot label {
+   display: flex;
+   align-items: center;
+   white-space: nowrap; /* Prevents text from breaking */
+}
 
 
-/* Responsive design */
+
+.terms-container a:hover {
+   text-decoration: underline;
+}
+
 @media (max-width: 768px) {
-   header{
-      width: 100%;
-      padding: 20px 60px;
-   }
-   .wrapper {
-       width: 95%;
-       padding: 15px;
+   header {
+      padding: 15px 30px; /* Reduce padding */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: nowrap; /* Prevent wrapping */
    }
    .name {
-       font-size: 1.5em;
-       margin-left: 15px;
+       font-size: 1.4em; /* Reduce font size */
+       margin-left: 10px;
+   }
+   .navigation {
+       display: flex;
+       align-items: center;
+       gap: 10px; /* Reduce spacing */
    }
    .navigation a {
        font-size: 0.9em;
-       margin-left: 10px;
+       margin-left: 5px;
    }
-  
+   .wrapper {
+      width: 95%;
+      padding: 15px;
+  }
 }
 
 @media (max-width: 480px) {
-    .name {
-      margin-left:10px;
-        font-size: 1.2em;
-    }
-
-    .wrapper {
-        max-width: 320px;
-        padding: 15px;
-    }
-    .navigation a {
-      font-size: 0.7em;
-      margin-left: 7px;
+   header {
+      padding: 10px 20px; /* Reduce padding */
+      flex-wrap: nowrap; /* Ensure everything stays on one line */
+   }
+   .name {
+       font-size: 1.2em;
+       margin-left: 5px;
+   }
+   .navigation {
+       gap: 5px; /* Reduce spacing */
+   }
+   .navigation a {
+       font-size: 0.8em;
+       margin-left: 3px;
+   }
+   .wrapper {
+      max-width: 320px;
+      padding: 10px;
   }
-
    
+   /* Increase input field width */
+.input-box input {
+   width: 100%; /* Make sure it takes full width */
+   font-size: 1.1em; /* Slightly increase font size */
+   padding: 7px; /* Add padding for better UX */
+}
+
+/* Adjust Remember Me and Forgot Password */
+.remember-forgot {
+   display: flex;
+   justify-content: space-between;
+   align-items: center; /* Keep checkbox and text aligned */
+   width: 100%; /* Make it span the full form width */
+   font-size: 0.9em;
+}
+
+.remember-forgot label {
+   display: flex;
+   align-items: center;
+   gap: 5px; /* Space between checkbox and text */
+}
+
+.remember-forgot a {
+   text-align: right; /* Align "Forgot Password" to the right */
+   flex-grow: 1;
+}
+
 }

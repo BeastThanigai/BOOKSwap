@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wishlist</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+    <style>/*
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -35,7 +35,7 @@
         .wishlist-image img {
     width: 100%;
     height: 200px; 
-    object-fit: cover; /* Maintain aspect ratio and crop excess */
+    object-fit: cover; 
     border-bottom: 1px solid #ccc;
 }
     
@@ -109,7 +109,275 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-        }
+        }*/
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 70px;
+    left: 180px; /* Moved leftwards */
+}
+
+h1 {
+    margin-top: 2px;
+    text-align: center;
+}
+
+#wishlist-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px; /* Slightly reduced gap */
+    padding: 15px;
+}
+
+.wishlist-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 280px; /* Adjusted width */
+    height: 360px; /* Reduced height */
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.wishlist-card:hover {
+    transform: scale(1.02);
+}
+
+.wishlist-image img {
+    width: 100%;
+    height: 180px; /* Reduced image height */
+    object-fit: cover;
+    border-bottom: 1px solid #ccc;
+    border-radius: 8px 8px 0 0;
+}
+
+.wishlist-details {
+    padding: 12px;
+}
+
+.wishlist-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.wishlist-actions button {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover Effects */
+.view-more {
+    background-color: #007bff;
+    color: white;
+}
+.view-more:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.exchange-btn {
+    background-color: #28a745;
+    color: white;
+}
+.exchange-btn:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.remove-btn {
+    background-color: #dc3545;
+    color: white;
+}
+.remove-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+#popup-overlay {
+    display: none; /* Ensures it's hidden initially */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+
+#popup-content {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    width: 350px; /* Reduced width */
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#popup-content h3 {
+    margin: 0 0 10px;
+}
+
+#popup-content p {
+    margin: 5px 0;
+}
+
+#popup-content button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#popup-content button:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    #wishlist-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Two boxes per row */
+        gap: 2px; /* Adjust spacing between items */
+        justify-content: center;
+        padding: 8px;
+        margin-left: -17%;
+    }
+
+    .wishlist-card {
+        height: 350px; /* Reduce height slightly */
+        padding: 10px;
+    }
+
+    .wishlist-image img {
+        width: 100%;
+        height: 180px; /* Slightly reduce image height */
+        object-fit: cover;
+        margin-left: -10px; /* Moves image slightly leftward */
+    }
+
+    .wishlist-actions {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .wishlist-actions button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    /* Adjust popup size */
+    #popup-content {
+        width: 350px; /* Reduce popup width */
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        left: 20%; /* Reduce left spacing */
+        top: 20px;
+        padding: 5px; /* Reduce padding */
+    }
+
+    #wishlist-container {
+        display: flex;
+        flex-direction: column; /* Single column layout */
+        align-items: center;
+        padding: 10px;
+        margin-left: 0; /* Reset unnecessary margin */
+    }
+
+    .wishlist-card {
+        width: 99%; /* Increased width */
+        height: 220px; /* Reduced height */
+        padding: 8px;
+        margin-bottom: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .wishlist-image {
+        text-align: center;
+    }
+
+    .wishlist-image img {
+        height: 120px; /* Further reduce image height */
+        width: 85%;
+        object-fit: cover;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .wishlist-details {
+        padding: 5px;
+        text-align: center;
+    }
+
+    .wishlist-details h3 {
+        font-size: 13px; /* Adjust font size */
+        margin-bottom: 3px;
+    }
+
+    .wishlist-details p {
+        font-size: 11px; /* Adjust author font size */
+        color: #555;
+        margin: 2px 0;
+    }
+
+    .wishlist-actions {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .wishlist-actions button {
+        flex: 1;
+        font-size: 11px;
+        padding: 7px 5px;
+        width: auto;
+        white-space: nowrap;
+    }
+
+    .view-more, .exchange-btn, .remove-btn {
+        width: 75px; /* Uniform width for all buttons */
+        height: 32px; /* Uniform height */
+    }
+
+    /* Smaller, centered popup */
+    #popup-overlay {
+        justify-content: center;
+        align-items: center;
+    }
+
+    #popup-content {
+        width: 230px; /* Reduce popup width */
+        padding: 10px;
+        position: relative;
+        left: 15px;
+        top: 0;
+        margin: auto;
+    }
+}
+
+
+
     </style>
 </head>
 <body>
@@ -226,7 +494,7 @@ window.viewMore = function (book) {
 window.closePopup = function () {
     document.getElementById("popup-overlay").style.display = "none";
 };
-
+/*
 window.handleExchangeRequest = function (bookID, userId) {
     if (!userId) {
         alert("You must be logged in to request an exchange.");
@@ -324,7 +592,143 @@ function createExchangeRequest(bookKey, bookOwnerId, userId, bookTitle) {
 
 function generateUniqueID() {
     return "req_" + Math.random().toString(36).substr(2, 9);
+}*/ 
+
+window.handleExchangeRequest = function (bookID, userId) {
+    if (!userId) {
+        alert("You must be logged in to request an exchange.");
+        return;
+    }
+
+    console.log("Requesting exchange for bookID:", bookID);
+
+    const booksRef = ref(db, "books/");
+
+    get(booksRef)
+        .then((snapshot) => {
+            if (!snapshot.exists()) {
+                alert("No books found in the system.");
+                return;
+            }
+
+            let foundBook = null;
+            let bookKey = null;
+            let bookOwnerId = null;
+
+            snapshot.forEach((childSnapshot) => {
+                const bookData = childSnapshot.val();
+                if (bookData.id === bookID) {
+                    foundBook = bookData;
+                    bookKey = childSnapshot.key; // ✅ Get the Firebase book ID
+                    bookOwnerId = bookData.userid;
+                }
+            });
+
+            if (!foundBook || !bookKey) {
+                alert("Book not found in the system.");
+                return;
+            }
+
+            if (!bookOwnerId) {
+                alert("Error: Book owner not found.");
+                return;
+            }
+
+            if (bookOwnerId === userId) {
+                alert("You cannot exchange your own book.");
+                return;
+            }
+
+            if (!foundBook.status || foundBook.status.toLowerCase() !== "available") {
+                alert(`Sorry, "${foundBook.title}" is currently unavailable for exchange.`);
+                return;
+            }
+
+            // ✅ Check if a pending request already exists
+            checkExistingRequestBeforeCreating(bookKey, bookOwnerId, userId, foundBook.title);
+        })
+        .catch((error) => {
+            console.error("Error fetching books:", error);
+            alert("Failed to fetch book information.");
+        });
+};
+
+function checkExistingRequestBeforeCreating(bookKey, bookOwnerId, userId, bookTitle) {
+    const exchangeRequestsRef = ref(db, "exchange_requests");
+
+    get(exchangeRequestsRef)
+        .then((snapshot) => {
+            if (snapshot.exists()) {
+                const requests = snapshot.val();
+
+                console.log("🔥 Checking existing exchange requests:", requests);
+
+                const hasPendingRequest = Object.values(requests).some(request => {
+                    return (
+                        request.bookRequested === bookKey &&
+                        request.userId === userId &&
+                        request.status.toLowerCase() === "pending"
+                    );
+                });
+
+                if (hasPendingRequest) {
+                    alert("⏳ You have already requested this book. Waiting for owner's approval.");
+                    return;
+                }
+            }
+
+            // ✅ No pending request, proceed with exchange request
+            createExchangeRequest(bookKey, bookOwnerId, userId, bookTitle);
+        })
+        .catch((error) => {
+            console.error("❌ Error checking existing requests:", error);
+            alert("Failed to check existing exchange requests.");
+        });
 }
+
+function createExchangeRequest(bookKey, bookOwnerId, userId, bookTitle) {
+    const requestID = generateUniqueID();
+
+    Promise.all([
+        get(ref(db, `profiles/${userId}`)), // Requester's profile
+        get(ref(db, `profiles/${bookOwnerId}`)) // Book owner's profile
+    ]).then(([requestedBySnap, requestedToSnap]) => {
+        const requestedByName = requestedBySnap.exists() ? requestedBySnap.val().name : "Unknown User";
+        const requestedToName = requestedToSnap.exists() ? requestedToSnap.val().name : "Unknown User";
+
+        const exchangeRef = ref(db, `exchange_requests/${requestID}`);
+
+        set(exchangeRef, {
+            requestID: requestID,
+            userId: userId, // ✅ Store requester's user ID
+            ownerId: bookOwnerId,
+            requestedBy: requestedByName, // ✅ Store requester's name
+            bookRequested: bookKey, // ✅ Store Firebase book ID
+            requestedTo: requestedToName,
+            status: "pending",
+            bookHandover: "pending",
+            bookReturn: "pending",
+            timestamp: Date.now()
+        })
+            .then(() => {
+                alert(`📌 Exchange request for "${bookTitle}" sent successfully!`);
+                const notificationMessage = `${requestedByName} requested an exchange for "${bookTitle}".`;
+                addNotification(bookOwnerId, userId, bookKey, notificationMessage);
+            })
+            .catch((error) => {
+                console.error("❌ Error sending exchange request:", error);
+                alert("Failed to send exchange request. Please try again.");
+            });
+    }).catch((error) => {
+        console.error("❌ Error fetching profile names:", error);
+        alert("Failed to retrieve user information.");
+    });
+}
+
+function generateUniqueID() {
+    return "req_" + Math.random().toString(36).substr(2, 9);
+}
+
 
 window.removeFromWishlist = function (bookKey) {
     const bookRef = ref(db, `wishlist/${userId}/${bookKey}`);

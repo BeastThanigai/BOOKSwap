@@ -7,7 +7,7 @@
     <style>
         body { font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 20px; }
         h2 { text-align: center; color: #333; margin-bottom: 20px; }
-    .transaction-container {
+   /* .transaction-container {
         margin-left: 150px;
         width: 1100px;
     padding: 20px;
@@ -26,7 +26,41 @@
     border-radius: 10px;
     padding: 15px;
     background-color: #f0f7f4;
+}*/
+.transaction-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
 }
+
+/* Default: Side-by-side layout */
+.transactions {
+    display: flex;
+    gap: 20px;
+}
+
+/* Each section (borrowed/lent) */
+.borrowed-section, .lent-section {
+    flex: 1;
+    border: 2px solid #4caf50;
+    border-radius: 10px;
+    padding: 15px;
+    background-color: #f0f7f4;
+}
+
+/* Show More styling */
+.show-more {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+}
+.show-more:hover {
+    color: darkblue;
+}
+
 
 .transaction-item {
     border-bottom: 1px solid #ccc;
@@ -37,6 +71,75 @@
 .transaction-item p {
     margin: 5px 0;
 }
+/* 💻 Window Minimization (Max 768px) */
+@media (max-width: 768px) {
+    .transaction-container {
+        width: 90%; /* Adjust width */
+        margin-left: 7%;
+        margin-right: auto; /* Center the container */
+        padding: 15px;
+    }
+
+    .transactions {
+        gap: 15px; /* Reduce gap between sections */
+    }
+
+    .borrowed-section, .lent-section {
+        padding: 12px;
+    }
+
+    .transaction-item {
+        padding: 8px 0; /* Reduce spacing */
+    }
+}
+
+
+@media (max-width: 480px) {
+    body{
+        padding-top: 5px;
+    }
+    .transaction-container {
+        margin-left: 8.5%;
+    }
+    .transactions {
+        flex-direction: column;
+    }
+    h2{
+        text-align: center;
+    }
+    h3{
+        text-align: center;
+    }
+
+    .borrowed-section, .lent-section {
+        width: 88%;
+        padding: 8px;
+        max-height: none;  /* Remove height limit so content expands properly */
+        overflow: visible; /* Ensures "Show More" works correctly */
+        position: relative;
+    }
+
+    /* Default state: show only first 2 transactions */
+    .borrowed-section.collapsed .transaction-item:nth-child(n+3),
+    .lent-section.collapsed .transaction-item:nth-child(n+3) {
+        display: none;
+    }
+
+    /* "Show More" appears at the bottom properly */
+    .show-more {
+        display: block;
+        text-align: center;
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .show-more:hover {
+        color: darkblue;
+    }
+}
+
 
     </style>
 </head>
@@ -103,7 +206,7 @@ async function getBookName(bookID) {
     }
 }
 
-
+/*
 async function fetchTransactionHistory() {
     const userName = await getUserName(userId);
     if (!userName) {
@@ -167,6 +270,89 @@ async function fetchTransactionHistory() {
         lentList.innerHTML = "<p>Error loading lent books.</p>";
     }
 }
+*/
+async function fetchTransactionHistory() {
+    const userName = await getUserName(userId);
+    if (!userName) {
+        borrowedList.innerHTML = "<p>User not found.</p>";
+        lentList.innerHTML = "<p>User not found.</p>";
+        return;
+    }
+
+    const requestsRef = ref(db, "exchange_requests");
+
+    try {
+        const snapshot = await get(requestsRef);
+        if (!snapshot.exists()) {
+            borrowedList.innerHTML = "<p>No borrowed books found.</p>";
+            lentList.innerHTML = "<p>No lent books found.</p>";
+            return;
+        }
+
+        const requests = Object.values(snapshot.val()).filter(req => req.status !== "reject" && req.status !== "pending");
+
+        // 🔹 Sort transactions by most recent first
+        requests.sort((a, b) => b.timestamp - a.timestamp);
+
+        let borrowedData = [], lentData = [];
+
+        for (const req of requests) {
+            const bookName = await getBookName(req.bookRequested);
+            const date = new Date(req.timestamp).toLocaleString();
+
+            const transactionHTML = `
+                <div class="transaction-item">
+                    <p><strong>Book:</strong> ${bookName}</p>
+                    <p><strong>${req.requestedBy === userName ? "Borrowed From" : "Lent To"}:</strong> ${req.requestedBy === userName ? req.requestedTo : req.requestedBy}</p>
+                    <p><strong>Status:</strong> ${req.status}</p>
+                    <p><strong>Handover:</strong> ${req.bookHandover}</p>
+                    <p><strong>Return:</strong> ${req.bookReturn}</p>
+                    <p><strong>Date:</strong> ${date}</p>
+                </div>`;
+
+            if (req.requestedBy === userName) {
+                borrowedData.push(transactionHTML);
+            } else if (req.requestedTo === userName) {
+                lentData.push(transactionHTML);
+            }
+        }
+
+        // 🔹 Function to render transactions with Show More
+        function renderTransactions(container, data) {
+            const MAX_VISIBLE = 2;  // Show first 2 transactions by default
+            let expanded = false;
+
+            function updateUI() {
+                container.innerHTML = data.slice(0, expanded ? data.length : MAX_VISIBLE).join("") || "<p>No transactions found.</p>";
+
+                if (data.length > MAX_VISIBLE) {
+                    const showMore = document.createElement("p");
+                    showMore.className = "show-more";
+                    showMore.innerText = expanded ? "Show Less" : "Show More";
+                    container.appendChild(showMore);
+
+                    showMore.addEventListener("click", () => {
+                        expanded = !expanded;
+                        updateUI(); // Re-render the list
+                    });
+                }
+            }
+
+            updateUI();  // Initial rendering
+        }
+
+        // 🔹 Render transactions for both sections
+        renderTransactions(borrowedList, borrowedData);
+        renderTransactions(lentList, lentData);
+
+    } catch (error) {
+        console.error("Error fetching transaction history:", error);
+        borrowedList.innerHTML = "<p>Error loading borrowed books.</p>";
+        lentList.innerHTML = "<p>Error loading lent books.</p>";
+    }
+}
+
+
 
 // Call the function on page load
 fetchTransactionHistory();

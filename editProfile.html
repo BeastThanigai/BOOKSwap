@@ -75,6 +75,19 @@
         button:hover {
             background: #ff4f4f;
         }
+        @media (max-width: 480px) {
+            body{
+                margin-top: 20px;
+            }
+            .container {
+            margin-left: 50px;
+            max-width:400px;
+            padding: 30px;
+            width: 360px;
+            margin-top: 250px;
+           
+        }
+        }
     </style>
 </head>
 <body>
@@ -120,11 +133,11 @@
             </div>
             <div class="input-group">
                 <label for="phone">Phone Number:</label>
-                <input type="tel" id="phone">
+                <input type="tel" id="phone" required>
             </div>
             <div class="input-group">
                 <label for="address">Address:</label>
-                <textarea id="address" rows="3"></textarea>
+                <textarea id="address" rows="3" required></textarea>
             </div>
             <div class="input-group">
                 <label for="bio">Bio:</label>

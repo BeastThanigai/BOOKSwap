@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-
+/*
 .view-books-container {
     padding: 2rem;
     text-align: center;
@@ -41,7 +41,7 @@
 
 .books-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Smaller card size */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
     gap: 1.5rem; 
 
 }
@@ -127,6 +127,177 @@
     .book-actions button {
         padding: 0.2rem 0.5rem;
         font-size: 0.7rem;
+    }
+}
+*/
+.view-books-container {
+    padding: 2rem;
+    text-align: center;
+    width: 900px; /* Reduced from 1000px */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.view-books-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+    text-align: center; /* Center the heading */
+}
+
+#addbtn {
+    display: block;
+    margin: 0 auto 20px auto; /* Centering the button */
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Reduced card size */
+    gap: 1.5rem;
+}
+
+.book-card {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 0.8rem;
+    text-align: left;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+    width: 220px; /* Adjusted */
+    margin: auto; /* Center the cards */
+}
+
+.book-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.book-card img {
+    width: 100%;
+    height: 130px; /* Reduced height */
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.book-card h2 {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+}
+
+.book-card p {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+    color: #666;
+    line-height: 1.3;
+}
+
+/* Action Buttons */
+.book-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.book-actions button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    margin: 0 0.3rem;
+}
+
+.book-actions button:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+
+@media (max-width: 768px) {
+    .view-books-container {
+        width: 100%; /* Full width */
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 book per row */
+    }
+
+    .book-card {
+        width: 260px; /* Slightly bigger than mobile */
+    }
+
+    .book-card img {
+        height: 140px; /* Slightly bigger */
+    }
+
+    .book-card h2 {
+        font-size: 0.9rem;
+    }
+    .book-actions button {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.7rem;
+        margin-top: 8px;
+    }
+}
+
+/* Mobile View */
+@media (max-width: 480px) {
+    .view-books-container {
+        width: 100%;
+        margin-top: -20px;
+    }
+    .view-books-container h1 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    margin-left: 2px;
+   
+}
+
+    #addbtn {
+        width:35%;
+        font-size: 0.8rem;
+        padding: 0.5rem;
+        margin-bottom: 18px;
+       
+    }
+
+    .books-grid {
+        grid-template-columns: repeat(1, 1fr); /* 1 book per row */
+        margin-right: 17px;
+    }
+
+    .book-card {
+        width: 220px; /* Reduce slightly */
+        padding: 0.7rem;
+    }
+
+    .book-card img {
+        height: 120px; /* Reduce slightly */
+    }
+
+    .book-card h2 {
+        font-size: 0.85rem;
+    }
+
+    .book-card p {
+        font-size: 0.75rem;
+    }
+
+    .book-actions button {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.6rem;
+        margin-top: 8px;
     }
 }
 

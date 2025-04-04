@@ -46,6 +46,51 @@
         .return-item button:hover {
             background-color: #218838;
         }
+        /* 💻 Window Minimization (Max 768px) */
+@media (max-width: 768px) {
+    body{
+        margin-top: 35px;
+    }
+    #pending-returns {
+        max-width: 80%; /* Reduce width */
+        padding: 13px; /* Adjust padding */
+        margin-left: 11%;
+    }
+    h1 {
+            font-size: 23px;
+        }
+}
+
+/* 📱 Mobile View (Max 480px) */
+@media (max-width: 480px) {
+    body {
+        margin-left: 2%;
+        padding: 10px;
+    }
+
+    #pending-returns {
+        max-width: 90%; /* Reduce width */
+        padding: 12px; /* Adjust padding */
+    }
+
+    .return-item {
+        padding: 8px 0; /* Reduce spacing */
+    }
+
+    .return-item h3 {
+        font-size: 16px; /* Adjust font size */
+    }
+
+    .return-item p {
+        font-size: 14px;
+    }
+
+    .return-item button {
+        padding: 8px 12px; /* Reduce button padding */
+        font-size: 14px;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -58,7 +103,7 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
-        import { getDatabase, ref, query, orderByChild, equalTo, get, update } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
+        import { getDatabase, ref, query, orderByChild, equalTo, get, update, remove} from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
 
         const firebaseConfig = {
         apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
@@ -75,107 +120,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-      /*  const params = new URLSearchParams(window.location.search);
-        const userId = params.get("userid");
 
-        if (!userId) {
-    alert("User ID not found in the URL. Please log in again.");
-}
-
-        // Function to load pending return confirmations
-        async function loadPendingReturns() {
-            const pendingReturnsContainer = document.getElementById('pending-returns');
-            pendingReturnsContainer.innerHTML = '<p>Loading pending returns...</p>';
-
-            try {
-                // Fetch owner's profile to get the owner's name
-                const ownerProfileRef = ref(db, `profiles/${userId}`);
-                const ownerProfileSnap = await get(ownerProfileRef);
-                if (!ownerProfileSnap.exists()) {
-                    pendingReturnsContainer.innerHTML = '<p>Owner profile not found.</p>';
-                    return;
-                }
-                const ownerName = ownerProfileSnap.val().name;
-
-                // Query exchange requests where requestedTo is the owner and bookReturn status is 'requested'
-                const exchangeRequestsRef = ref(db, 'exchange_requests');
-                const exchangeRequestsQuery = query(exchangeRequestsRef, orderByChild('requestedTo'), equalTo(ownerName));
-                const exchangeRequestsSnap = await get(exchangeRequestsQuery);
-
-                if (!exchangeRequestsSnap.exists()) {
-                    pendingReturnsContainer.innerHTML = '<p>No pending return confirmations.</p>';
-                    return;
-                }
-
-                const exchanges = exchangeRequestsSnap.val();
-                const pendingReturns = Object.keys(exchanges).filter(key => exchanges[key].bookReturn === 'Requested');
-
-                if (pendingReturns.length === 0) {
-                    pendingReturnsContainer.innerHTML = '<p>No pending return confirmations.</p>';
-                    return;
-                }
-
-                pendingReturnsContainer.innerHTML = '';
-                pendingReturns.forEach(async (exchangeKey) => {
-                    const exchange = exchanges[exchangeKey];
-                    const bookRef = ref(db, `books/${exchange.bookRequested}`);
-                    const bookSnap = await get(bookRef);
-                    const book = bookSnap.exists() ? bookSnap.val() : { title: 'Unknown Title' };
-
-                    const returnItem = document.createElement('div');
-                    returnItem.className = 'return-item';
-                    returnItem.innerHTML = `
-                        <h3>${book.title}</h3>
-                        <p><strong>Borrower:</strong> ${exchange.requestedBy}</p>
-                        <p><strong>Status:</strong> Return Requested</p>
-                        <button onclick="confirmReturn('${exchangeKey}', '${exchange.bookRequested}')">Confirm Receipt</button>
-                    `;
-                    pendingReturnsContainer.appendChild(returnItem);
-                });
-            } catch (error) {
-                console.error('Error loading pending returns:', error);
-                pendingReturnsContainer.innerHTML = '<p>Error loading pending returns.</p>';
-            }
-        }
-
-        // Function to confirm book return
-        async function confirmReturn(exchangeKey, bookKey) {
-            const exchangeRef = ref(db, `exchange_requests/${exchangeKey}`);
-            const bookRef = ref(db, `books/${bookKey}`);
-
-            try {
-                // Update exchange request status to 'completed' and bookReturn to 'returned'
-                await update(exchangeRef, {
-                    status: 'completed',
-                    bookReturn: 'returned'
-                });
-
-                // Update book status to 'available'
-                await update(bookRef, {
-                    status: 'available'
-                });
-
-                alert('Book return confirmed successfully.');
-                loadPendingReturns(); // Refresh the list
-            } catch (error) {
-                console.error('Error confirming book return:', error);
-                alert('Failed to confirm book return. Please try again.');
-            }
-        }
-
-        // Load pending returns on page load
-        loadPendingReturns();
-
-        // Expose confirmReturn function to the global scope
-        window.confirmReturn = confirmReturn;*/
-        
         const params = new URLSearchParams(window.location.search);
 const userId = params.get("userid");
 
 if (!userId) {
     alert("User ID not found in the URL. Please log in again.");
 }
-
+/*
 // Function to load all lent books and prioritize those with return requests
 async function loadLentBooks() {
     const lentBooksContainer = document.getElementById('pending-returns');
@@ -302,8 +254,135 @@ loadLentBooks();
 
 // Expose confirmReturn function to the global scope
 window.confirmReturn = confirmReturn;
+*/ 
+// Function to fetch borrower's total fine from Firebase
 
-   
+async function loadLentBooks() {
+    const lentBooksContainer = document.getElementById('pending-returns');
+    lentBooksContainer.innerHTML = '<p>Loading lent books...</p>';
+
+    try {
+        // Fetch owner's profile to get the owner's name
+        const ownerProfileRef = ref(db, `profiles/${userId}`);
+        const ownerProfileSnap = await get(ownerProfileRef);
+        if (!ownerProfileSnap.exists()) {
+            lentBooksContainer.innerHTML = '<p>Owner profile not found.</p>';
+            return;
+        }
+        const ownerName = ownerProfileSnap.val().name;
+
+        // Query exchange requests where requestedTo is the owner
+        const exchangeRequestsRef = ref(db, 'exchange_requests');
+        const exchangeRequestsQuery = query(exchangeRequestsRef, orderByChild('requestedTo'), equalTo(ownerName));
+        const exchangeRequestsSnap = await get(exchangeRequestsQuery);
+
+        if (!exchangeRequestsSnap.exists()) {
+            lentBooksContainer.innerHTML = '<p>No lent books found.</p>';
+            return;
+        }
+
+        const exchanges = exchangeRequestsSnap.val();
+        const lentBooks = Object.keys(exchanges)
+            .map(key => ({ key, ...exchanges[key] }))
+            .filter(exchange => exchange.bookReturn !== 'returned'); // Exclude returned books
+
+        // Sort: prioritize books with return requests
+        lentBooks.sort((a, b) => {
+            if (a.bookReturn === 'Requested' && b.bookReturn !== 'Requested') return -1;
+            if (a.bookReturn !== 'Requested' && b.bookReturn === 'Requested') return 1;
+            return 0;
+        });
+
+        lentBooksContainer.innerHTML = '';
+        lentBooks.forEach(async (exchange) => {
+            const bookRef = ref(db, `books/${exchange.bookRequested}`);
+            const bookSnap = await get(bookRef);
+            const book = bookSnap.exists() ? bookSnap.val() : { title: 'Unknown Title' };
+
+            let lateFee = 0;
+            let finePaid = exchange.finePaid || false;
+            const dueDate = new Date(exchange.dueDate);
+
+            if (new Date() > dueDate) {
+                // Fetch fine breakdown from profiles reference
+                const fineBreakdownRef = ref(db, `profiles/${exchange.userId}/fine/breakdown/${exchange.bookRequested}`);
+                const fineSnap = await get(fineBreakdownRef);
+                if (fineSnap.exists()) {
+                    lateFee = fineSnap.val();
+                }
+            }
+
+            // Store fine details in exchange request if not already stored
+            if (lateFee > 0 && !exchange.fineAmount) {
+                await update(ref(db, `exchange_requests/${exchange.key}`), {
+                    fineAmount: lateFee,
+                    finePaid: 'NoFine'
+                });
+            }
+
+            const returnItem = document.createElement('div');
+            returnItem.className = 'return-item';
+            returnItem.innerHTML = `
+                <h3>${book.title}</h3>
+                <p><strong>Borrower:</strong> ${exchange.requestedBy}</p>
+                <p><strong>Due Date:</strong> ${dueDate.toDateString()}</p>
+                ${lateFee > 0 ? `<p style=" color:red;"><strong>Late Fee:</strong> Rs.${lateFee.toFixed(2)}</p>` : ''}
+
+                ${exchange.bookReturn === 'Requested' ? `
+                    <button onclick="confirmReturn('${exchange.key}', '${exchange.bookRequested}', '${exchange.userId}', ${lateFee})">
+                        ${lateFee > 0 && !finePaid ? 'Receipt with Fine Collected' : 'Confirm Receipt'}
+                    </button>
+                ` : ''}
+            `;
+            lentBooksContainer.appendChild(returnItem);
+        });
+    } catch (error) {
+        console.error('Error loading lent books:', error);
+        lentBooksContainer.innerHTML = '<p>Error loading lent books.</p>';
+    }
+}
+
+// Function to confirm book return and handle fine
+async function confirmReturn(exchangeKey, bookKey, borrowerId, fineAmount) {
+    const exchangeRef = ref(db, `exchange_requests/${exchangeKey}`);
+    const bookRef = ref(db, `books/${bookKey}`);
+    const fineBreakdownRef = ref(db, `profiles/${borrowerId}/fine/breakdown/${bookKey}`);
+    const totalFineRef = ref(db, `profiles/${borrowerId}/fine/totalFine`);
+
+    try {
+        // Update exchange request status to 'completed' and bookReturn to 'returned'
+        await update(exchangeRef, {
+            status: 'completed',
+            bookReturn: 'returned',
+            finePaid: fineAmount > 0 ? true : 'No Fine'
+        });
+
+        // If fine is due, reduce total fine and remove book-specific fine
+        if (fineAmount > 0) {
+            const totalFineSnap = await get(totalFineRef);
+            if (totalFineSnap.exists()) {
+                let totalFine = totalFineSnap.val() - fineAmount;
+                totalFine = Math.max(totalFine, 0); // Ensure totalFine doesn't go negative
+                await update(totalFineRef, { totalFine });
+            }
+            await remove(fineBreakdownRef); // Remove fine record for this book
+        }
+
+        // Update book status to 'available'
+        await update(bookRef, { status: 'available' });
+
+        alert('Book return confirmed successfully.');
+        loadLentBooks(); // Refresh the list
+    } catch (error) {
+        console.error('Error confirming book return:', error);
+        alert('Failed to confirm book return. Please try again.');
+    }
+}
+
+// Load lent books on page load
+loadLentBooks();
+window.confirmReturn = confirmReturn;
+
     </script>
 </body>
 </html>

@@ -42,6 +42,40 @@
         .return-btn:disabled {
             background-color: #ccc;
         }
+        /* 📏 Window Minimization (Max 768px) */
+@media (max-width: 768px) {
+    .book-container {
+        justify-content: center;
+    }
+
+    .book-card {
+        width: calc(50% - 20px); /* Two cards per row */
+    }
+}
+
+/* 📱 Mobile View (Max 480px) */
+@media (max-width: 480px) {
+    body {
+        margin: 20px;
+        margin-left: 14%;
+        padding: 9px;
+    }
+h1{
+    font-size: 18px;
+    margin-left: 19%;
+    margin-bottom: 18px;
+
+}
+    .book-container {
+        flex-direction: column; /* Stack vertically */
+        align-items: center; /* Center align */
+    }
+
+    .book-card {
+        width: 85%; /* Full width with some margin */
+    }
+}
+
     </style>
 </head>
 <body>
@@ -79,7 +113,7 @@ if (!userId) {
 } else {
     loadBorrowedBooks(userId);
 }
-
+/*
 async function loadBorrowedBooks(userId) {
     try {
         // Fetch the user's profile to get their name
@@ -125,7 +159,7 @@ async function loadBorrowedBooks(userId) {
                         <h3>${book.title}</h3>
                         <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
                         <p><strong>Due Date:</strong> ${dueDate.toDateString()}</p>
-                        <button class="return-btn" onclick="returnBook('${exchangeKey}', '${bookId}', '${userId}', '${book.userid}', '${book.title}')">Return Book</button>
+                        <button class="return-btn" id="returnButton-${exchangeKey}" onclick="returnBook('${exchangeKey}', '${bookId}', '${userId}', '${book.userid}', '${book.title}')">Return Book</button>
                     `;
 
                     bookContainer.appendChild(bookCard);
@@ -171,6 +205,346 @@ window.returnBook = async function(exchangeKey, bookId, borrowerId, ownerId, boo
         });
 
         alert("Return request sent successfully.");
+        const returnButton = document.getElementById(`returnButton-${exchangeKey}`);
+        if (returnButton) {
+            const parentElement = returnButton.parentNode;
+
+            returnButton.remove();
+            const messageElement = document.createElement('p');
+            messageElement.textContent = "Waiting for owner's confirmation of receipt...";
+            parentElement.appendChild(messageElement);
+            console.log("Message added successfully.");
+        }
+        else {
+        console.error("Parent element not found.");
+    }
+    } catch (error) {
+        console.error("Error initiating return request:", error);
+        alert("Failed to send return request. Please try again.");
+    }
+};
+*/
+/*function calculateDueDate(timestamp) {
+    const borrowDate = new Date(timestamp);
+    const dueDate = new Date(borrowDate);
+    dueDate.setDate(borrowDate.getDate() + 14); 
+    return dueDate;
+}
+    function calculateFine(dueDate) {
+    const today = new Date();
+    const daysLate = Math.max(0, Math.floor((today - dueDate) / (1000 * 60 * 60 * 24)));
+    return daysLate * 2; // Assuming a fine of $2 per day
+}
+*/
+
+/*
+async function loadBorrowedBooks(userId) {
+    try {
+        // Fetch the user's profile to get their name
+        const profileRef = ref(db, `profiles/${userId}`);
+        const profileSnap = await get(profileRef);
+
+        if (!profileSnap.exists()) {
+            console.error("User profile not found.");
+            return;
+        }
+
+        const userName = profileSnap.val().name;
+
+        // Query exchange requests where requestedBy matches the user's name and status is "accepted"
+        const exchangesRef = ref(db, 'exchange_requests');
+        const exchangesQuery = query(exchangesRef, orderByChild('requestedBy'), equalTo(userName));
+        const exchangesSnap = await get(exchangesQuery);
+
+        if (!exchangesSnap.exists()) {
+            console.log("No borrowed books found.");
+            return;
+        }
+
+        const exchanges = exchangesSnap.val();
+        const bookContainer = document.getElementById("book-container");
+        bookContainer.innerHTML = ""; // Clear previous entries
+
+        for (const exchangeKey in exchanges) {
+            const exchange = exchanges[exchangeKey];
+
+            if (exchange.status === "accepted" && exchange.bookHandover === "Borrowed") {
+                const bookId = exchange.bookRequested;
+                const bookRef = ref(db, `books/${bookId}`);
+                const bookSnap = await get(bookRef);
+
+                if (bookSnap.exists()) {
+                    const book = bookSnap.val();
+                    
+                    // Calculate due date
+                    let dueDate;
+                    if (exchange.dueDate) {
+                        dueDate = new Date(exchange.dueDate);
+                    } else {
+                        dueDate = calculateDueDate(exchange.timestamp);
+                        await update(ref(db, `exchange_requests/${exchangeKey}`), { dueDate: dueDate.getTime() });
+                    }
+
+                    // Calculate fine
+                    const fine = calculateFine(dueDate);
+                    if (fine > 0) {
+                        await storeFine(userId, bookId, fine);
+                    }
+
+                    const bookCard = document.createElement("div");
+                    bookCard.className = "book-card";
+                    bookCard.innerHTML = `
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
+                        <p><strong>Due Date:</strong> ${dueDate.toDateString()}</p>
+                        ${fine > 0 ? `<p style="color: red;"><strong>Late Fine:</strong> $${fine}</p>` : ""}
+                        <button class="return-btn" id="returnButton-${exchangeKey}" onclick="returnBook('${exchangeKey}', '${bookId}', '${userId}', '${book.userid}', '${book.title}')">Return Book</button>
+                    `;
+
+                    bookContainer.appendChild(bookCard);
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching borrowed books:", error);
+    }
+}
+
+// Function to calculate due date (Assuming a 14-day loan period)
+function calculateDueDate(timestamp) {
+    const borrowDate = new Date(timestamp);
+    const dueDate = new Date(borrowDate);
+    dueDate.setDate(borrowDate.getDate() + (2*60*1000)); 
+    return dueDate;
+}
+
+
+function calculateDueDate(timestamp) {
+    const borrowDate = new Date(timestamp);
+    const dueDate = new Date(borrowDate.getTime() + (2 * 60 * 1000)); // Add 2 minutes
+    return dueDate;
+}
+
+
+// Function to calculate fine based on days overdue
+function calculateFine(dueDate) {
+    const today = new Date();
+    const daysLate = Math.max(0, Math.floor((today - dueDate) / (1000 * 60 * 60 * 24)));
+    return daysLate * 2; // Assuming a fine of $2 per day
+}
+
+// Function to store fine in user profile
+async function storeFine(userId, bookId, fineAmount) {
+    const fineRef = ref(db, `profiles/${userId}/fine`);
+    const fineSnap = await get(fineRef);
+    let fineData = fineSnap.exists() ? fineSnap.val() : { breakdown: {}, totalFine: 0 };
+
+    fineData.breakdown[bookId] = fineAmount;
+    fineData.totalFine = Object.values(fineData.breakdown).reduce((acc, curr) => acc + curr, 0);
+
+    await update(ref(db, `profiles/${userId}/fine`), fineData);
+}
+
+// Function to check if a user is restricted from borrowing due to late fines
+async function checkFineRestriction(userId) {
+    const fineRef = ref(db, `profiles/${userId}/fine`);
+    const fineSnap = await get(fineRef);
+
+    if (fineSnap.exists() && fineSnap.val().totalFine > 60) { // Assuming 30-day limit ($2 * 30 days)
+        alert("You have an overdue fine exceeding 30 days. Please return the book and pay the fine before requesting new exchanges.");
+        return true;
+    }
+    return false;
+}
+
+// Modified returnBook function
+window.returnBook = async function(exchangeKey, bookId, borrowerId, ownerId, bookTitle) {
+    try {
+        if (!ownerId) {
+            console.error("Owner ID is undefined. Cannot send notification.");
+            alert("Error: Owner information is missing.");
+            return;
+        }
+
+        const exchangeRef = ref(db, `exchange_requests/${exchangeKey}`);
+        await update(exchangeRef, { bookReturn: "Requested" });
+
+        // Reference to the owner's notifications node
+        const notificationRef = ref(db, `notifications/${ownerId}`);
+        const newNotificationRef = push(notificationRef);
+
+        // Create the notification
+        await set(newNotificationRef, {
+            senderId: borrowerId,
+            bookId: bookId,
+            message: `${bookTitle} has been requested for return.`,
+            read: false,
+            timestamp: Date.now()
+        });
+
+        alert("Return request sent successfully.");
+        const returnButton = document.getElementById(`returnButton-${exchangeKey}`);
+        if (returnButton) {
+            const parentElement = returnButton.parentNode;
+            returnButton.remove();
+            const messageElement = document.createElement('p');
+            messageElement.textContent = "Waiting for owner's confirmation of receipt...";
+            parentElement.appendChild(messageElement);
+        } else {
+            console.error("Parent element not found.");
+        }
+    } catch (error) {
+        console.error("Error initiating return request:", error);
+        alert("Failed to send return request. Please try again.");
+    }
+};
+*/ 
+
+function formatDueDate(timestamp) {
+    const date = new Date(timestamp);
+    date.setHours(0, 0, 0, 0); // ✅ Force reset time to midnight
+    return date
+}
+
+
+function calculateFine(dueDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Remove time for accurate day comparison
+    dueDate.setHours(0, 0, 0, 0);
+
+    const daysLate = Math.max(0, Math.floor((today - dueDate) / (1000 * 60 * 60 * 24)));
+    return daysLate > 0 ? daysLate * 2 : 0; // Fine starts from the next day
+}
+
+
+// Function to store fine in user profile
+async function storeFine(userId, bookId, fineAmount) {
+    const fineRef = ref(db, `profiles/${userId}/fine`);
+    const fineSnap = await get(fineRef);
+    
+    let fineData = fineSnap.exists() ? fineSnap.val() : { totalFine: 0 };
+
+    // Ensure breakdown exists
+    if (!fineData.breakdown) {
+        fineData.breakdown = {};
+    }
+
+    // Store fine for this book
+    fineData.breakdown[bookId] = fineAmount;
+
+    // Recalculate total fine
+    fineData.totalFine = Object.values(fineData.breakdown).reduce((acc, curr) => acc + curr, 0);
+    await update(ref(db, `profiles/${userId}/fine`), fineData);
+}
+
+
+// Function to load borrowed books and check fines
+async function loadBorrowedBooks(userId) {
+    try {
+        // Fetch user profile
+        const profileRef = ref(db, `profiles/${userId}`);
+        const profileSnap = await get(profileRef);
+
+        if (!profileSnap.exists()) {
+            console.error("User profile not found.");
+            return;
+        }
+
+        const userName = profileSnap.val().name;
+
+        // Query exchange requests where requestedBy matches user's name and status is "accepted"
+        const exchangesRef = ref(db, 'exchange_requests');
+        const exchangesQuery = query(exchangesRef, orderByChild('requestedBy'), equalTo(userName));
+        const exchangesSnap = await get(exchangesQuery);
+
+        if (!exchangesSnap.exists()) {
+            console.log("No borrowed books found.");
+            return;
+        }
+
+        const exchanges = exchangesSnap.val();
+        const bookContainer = document.getElementById("book-container");
+        bookContainer.innerHTML = ""; // Clear previous entries
+
+        for (const exchangeKey in exchanges) {
+            const exchange = exchanges[exchangeKey];
+
+            if (exchange.status === "accepted" && exchange.bookHandover === "Borrowed") {
+                const bookId = exchange.bookRequested;
+                const bookRef = ref(db, `books/${bookId}`);
+                const bookSnap = await get(bookRef);
+
+                if (bookSnap.exists()) {
+                    const book = bookSnap.val();
+                    
+                  
+                   let dueDate = new Date(exchange.dueDate)
+                    // Calculate fine
+                    const fine = calculateFine(dueDate);
+                    if (fine > 0) {
+                        await storeFine(userId, bookId, fine);
+                    }
+
+                    // Create book card
+                    const bookCard = document.createElement("div");
+                    bookCard.className = "book-card";
+                    bookCard.innerHTML = `
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author || "Unknown"}</p>
+                        <p><strong>Due Date:</strong> ${dueDate.toDateString()}</p>
+                        ${fine > 0 ? `<p style="color: red;"><strong>Late Fine:</strong> Rs.${fine.toFixed(2)}</p>` : ""}
+                        <button class="return-btn" id="returnButton-${exchangeKey}" 
+                            onclick="returnBook('${exchangeKey}', '${bookId}', '${userId}', '${book.userid}', '${book.title}')"
+                            style="background-color: ${fine > 0 ? 'red' : '#4CAF50'}; color: white; padding: 10px; border: none; cursor: pointer;">
+                            Return Book
+                        </button>
+                    `;
+
+                    bookContainer.appendChild(bookCard);
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching borrowed books:", error);
+    }
+}
+
+// Modified returnBook function
+window.returnBook = async function(exchangeKey, bookId, borrowerId, ownerId, bookTitle) {
+    try {
+        if (!ownerId) {
+            console.error("Owner ID is undefined. Cannot send notification.");
+            alert("Error: Owner information is missing.");
+            return;
+        }
+
+        const exchangeRef = ref(db, `exchange_requests/${exchangeKey}`);
+        await update(exchangeRef, { bookReturn: "Requested" });
+
+        // Reference to the owner's notifications node
+        const notificationRef = ref(db, `notifications/${ownerId}`);
+        const newNotificationRef = push(notificationRef);
+
+        // Create the notification
+        await set(newNotificationRef, {
+            senderId: borrowerId,
+            bookId: bookId,
+            message: `${bookTitle} has been requested for return.`,
+            read: false,
+            timestamp: Date.now()
+        });
+
+        alert("Return request sent successfully.");
+        const returnButton = document.getElementById(`returnButton-${exchangeKey}`);
+        if (returnButton) {
+            const parentElement = returnButton.parentNode;
+            returnButton.remove();
+            const messageElement = document.createElement('p');
+            messageElement.textContent = "Waiting for owner's confirmation of receipt...";
+            parentElement.appendChild(messageElement);
+        } else {
+            console.error("Parent element not found.");
+        }
     } catch (error) {
         console.error("Error initiating return request:", error);
         alert("Failed to send return request. Please try again.");

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions</title>
+    <Style>
+        /* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.terms-container {
+    max-width: 600px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Headings */
+h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+.intro-text {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Collapsible Sections */
+.terms-section {
+    margin-top: 15px;
+}
+
+.collapsible {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.collapsible:hover {
+    background-color: #0056b3;
+}
+
+.collapsible.active {
+    background-color: #0056b3;
+}
+
+.content {
+    display: none;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-left: 3px solid #007bff;
+    margin-top: 5px;
+    border-radius: 5px;
+}
+
+/* Back Button */
+.back-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.back-btn:hover {
+    background: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .terms-container {
+        max-width: 90%;
+        padding: 15px;
+        margin-left: 9%;
+    }
+
+    .collapsible {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .back-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    body{
+        margin-top: 0;
+    }
+    .terms-container {
+        max-width: 85%;
+        padding: 10px;
+        margin-left: 10%;
+    }
+
+    .collapsible {
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    .back-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+    </Style>
+</head>
+<body>
+    <div class="terms-container">
+        <h1>Terms and Conditions</h1>
+        <p class="intro-text">Please read these terms carefully before using our platform.</p>
+
+        <div class="terms-section">
+            <button class="collapsible">1. General Usage</button>
+            <div class="content">
+                <p>By using this platform, you agree to follow all rules and regulations set by us.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <button class="collapsible">2. Prohibited Content</button>
+            <div class="content">
+                <p>You are strictly prohibited from uploading illegal, pirated, or copyrighted materials. Violation may result in **permanent suspension** or **legal actions**.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <button class="collapsible">3. User Responsibilities</button>
+            <div class="content">
+                <p>You are responsible for any content you upload. Ensure that you have the legal rights to share any book or material on this platform.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <button class="collapsible">4. Account Suspension</button>
+            <div class="content">
+                <p>Accounts found violating the terms may be **suspended or banned** without prior notice.</p>
+            </div>
+        </div>
+
+        <div class="terms-section">
+            <button class="collapsible">5. Contact & Support</button>
+            <div class="content">
+                <p>If you have any queries, please contact us at <a href="mailto:bookswap.notify@gmail.com">bookswap.notify@gmail.com</a>.</p>
+            </div>
+        </div>
+
+        <a href="javascript:void(0);" class="back-btn" onclick="window.history.back();">Go Back</a>
+
+    </div>
+
+    <script>
+        // Collapsible Sections
+        document.querySelectorAll(".collapsible").forEach(button => {
+            button.addEventListener("click", function () {
+                this.classList.toggle("active");
+                let content = this.nextElementSibling;
+                content.style.display = (content.style.display === "block") ? "none" : "block";
+            });
+        });
+    </script>
+</body>
+</html>
