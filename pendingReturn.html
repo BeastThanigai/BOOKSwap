@@ -283,8 +283,12 @@ async function loadLentBooks() {
 
         const exchanges = exchangeRequestsSnap.val();
         const lentBooks = Object.keys(exchanges)
-            .map(key => ({ key, ...exchanges[key] }))
-            .filter(exchange => exchange.bookReturn !== 'returned'); // Exclude returned books
+    .map(key => ({ key, ...exchanges[key] }))
+    .filter(exchange => 
+        exchange.status === 'accepted' && 
+        exchange.bookReturn !== 'returned'
+    );
+
 
         // Sort: prioritize books with return requests
         lentBooks.sort((a, b) => {

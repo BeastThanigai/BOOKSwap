@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Book Exchange</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 200px;
+      background: #2d3748;
+      color: #fff;
+      padding: 20px;
+      height: 100vh;
+    }
+    .sidebar h2 {
+      margin-top: 0;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+    .sidebar li {
+      margin: 15px 0;
+      cursor: pointer;
+    }
+    .main {
+      flex-grow: 1;
+      padding: 20px;
+      background-color: #f7fafc;
+    }
+    .card {
+      background-color: #edf2f7;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .section {
+      display: none;
+    }
+    .section:not(.hidden) {
+      display: block;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #fff;
+    }
+    table th, table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    table th {
+      background: #e2e8f0;
+    }
+    canvas {
+      max-height: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Admin Panel</h2>
+    <ul>
+      <li onclick="showSection('dashboard')">Dashboard</li>
+      <li onclick="showSection('users')">Users</li>
+      <li onclick="showSection('books')">Books</li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="section">
+      <h2>Platform Analytics</h2>
+      <div class="card">Total Users: <span id="userCount">Loading...</span></div>
+      <div class="card">Uploaded Books: <span id="bookCount">Loading...</span></div>
+      <div class="card">Books Exchanged: <span id="exchangedCount">Loading...</span></div>
+      <div class="card">Books Returned: <span id="returnedCount">Loading...</span></div>
+
+      <h3>User Login Trend</h3>
+      <canvas id="loginChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Users Section -->
+    <div id="usersSection" class="section hidden">
+      <h2>All Users</h2>
+      <table id="usersTable">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Books Section -->
+    <div id="booksSection" class="section hidden">
+      <h2>All Books</h2>
+      <table id="booksTable">
+        <thead>
+          <tr><th>Title</th><th>Author</th><th>Genre</th><th>Uploader</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Firebase + JS Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1wF844Xeur0bEDQfZdoydiNbcLdlStOU",
+      authDomain: "bookexc.firebaseapp.com",
+      projectId: "bookexc",
+      storageBucket: "bookexc.appspot.com",
+      messagingSenderId: "688636268839",
+      appId: "1:688636268839:web:abe81b13bc8bfa8ab01902",
+      measurementId: "G-8TZ99T5M1L",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Section Switching
+    window.showSection = function (id) {
+      document.querySelectorAll(".section").forEach(sec => sec.classList.add("hidden"));
+      const section = document.getElementById(id + "Section");
+      if (section) {
+        section.classList.remove("hidden");
+        if (id === "dashboard") {
+          fetchStats();
+          loadLoginChart()
+        } else if (id === "users") {
+          loadUsers();
+        } else if (id === "books") {
+          loadBooks();
+        }
+      }
+    };
+
+    // Analytics
+    async function fetchStats() {
+      const [userSnap, bookSnap, exchangeSnap] = await Promise.all([
+        get(ref(db, "users")),
+        get(ref(db, "books")),
+        get(ref(db, "exchange_requests"))
+      ]);
+
+      document.getElementById("userCount").textContent = userSnap.exists()
+        ? Object.keys(userSnap.val()).length
+        : 0;
+
+      document.getElementById("bookCount").textContent = bookSnap.exists()
+        ? Object.keys(bookSnap.val()).length
+        : 0;
+
+      let exchanged = 0, returned = 0;
+
+      if (exchangeSnap.exists()) {
+    Object.values(exchangeSnap.val()).forEach(req => {
+      if (req.status === "accepted") exchanged++;
+      if (req.status === "completed") returned++;
+    });
+  }
+
+      document.getElementById("exchangedCount").textContent = exchanged;
+      document.getElementById("returnedCount").textContent = returned;
+    }
+
+    async function loadLoginChart() {
+  const loginsSnap = await get(ref(db, 'logins'));
+  const dayCount = {
+    Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0, Sat: 0, Sun: 0
+  };
+
+  if (loginsSnap.exists()) {
+    const logins = loginsSnap.val();
+    Object.values(logins).forEach(userLogs => {
+      Object.keys(userLogs).forEach(dateStr => {
+        const day = new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short' });
+        if (dayCount[day] !== undefined) {
+          dayCount[day]++;
+        }
+      });
+    });
+  }
+
+  const ctx = document.getElementById('loginChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(dayCount),
+      datasets: [{
+        label: 'User Logins',
+        data: Object.values(dayCount),
+        backgroundColor: '#48bb78'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+    }
+  });
+}
+
+    // Load Users Table
+    async function loadUsers() {
+      const snap = await get(ref(db, "profiles"));
+      const tbody = document.querySelector("#usersTable tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      if (snap.exists()) {
+        Object.entries(snap.val()).forEach(([id, user]) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.phone}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+    }
+
+    // Load Books Table with uploader names
+    async function loadBooks() {
+      const [bookSnap, profileSnap] = await Promise.all([
+        get(ref(db, "books")),
+        get(ref(db, "profiles"))
+      ]);
+
+      const tbody = document.querySelector("#booksTable tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      const profiles = profileSnap.exists() ? profileSnap.val() : {};
+
+      if (bookSnap.exists()) {
+        Object.entries(bookSnap.val()).forEach(([id, book]) => {
+          const uploaderName = profiles[book.userid]?.name || "Unknown";
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.genre}</td>
+            <td>${uploaderName}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+    }
+
+    // Load dashboard by default
+    showSection("dashboard");
+  </script>
+</body>
+</html>

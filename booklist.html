@@ -709,18 +709,15 @@ window.openReviewPopup = function (bookId) {
     document.body.appendChild(reviewPopup);
 }
 
-
 window.submitReview = function (bookId) {
     const reviewRating = document.querySelector('input[name="rating"]:checked')?.value;
     const reviewText = document.getElementById('reviewText').value.trim();
-
 
     if (!reviewRating) {
         showErrorPopup("Please select a rating before submitting.");
         return;
     }
 
-   
     const userProfileRef = ref(db, `profiles/${userId}`);
 
     get(userProfileRef).then((userProfileSnapshot) => {
@@ -730,46 +727,47 @@ window.submitReview = function (bookId) {
         }
 
         const userName = userProfileSnapshot.val().name;
-
-     
         const exchangesRef = ref(db, 'exchange_requests');
 
         get(exchangesRef).then((snapshot) => {
             if (snapshot.exists()) {
-                let hasExchanged = false;
                 const exchanges = snapshot.val();
+                let hasExchanged = false;
+                let reviewSubmitted = false;
 
-                // Iterate through each exchange request
-                for (const exchangeKey in exchanges) {
+                // Iterate through exchange requests
+                const exchangePromises = Object.keys(exchanges).map(async (exchangeKey) => {
                     const exchange = exchanges[exchangeKey];
 
-                    // Check if the exchange was requested by the current user and has been accepted
-                    if (exchange.requestedBy === userName && exchange.status === "accepted") {
+                    // Check if the exchange was requested by the user and status is "accepted" or "completed"
+                    if (exchange.userId === userId && (exchange.status === "accepted" || exchange.status === "completed")) {
                         const bookDocId = exchange.bookRequested;
                         const bookRef = ref(db, `books/${bookDocId}`);
 
-                        
-                        get(bookRef).then((bookSnapshot) => {
+                        try {
+                            const bookSnapshot = await get(bookRef);
                             if (bookSnapshot.exists()) {
                                 const book = bookSnapshot.val();
                                 if (book.id === bookId) {
                                     hasExchanged = true;
-                                  
-                                   submitReviewToDatabase(bookId, reviewRating, reviewText);
+                                    if (!reviewSubmitted) {
+                                        reviewSubmitted = true;
+                                        submitReviewToDatabase(bookId, reviewRating, reviewText);
+                                    }
                                 }
                             }
-                        }).catch((error) => {
+                        } catch (error) {
                             console.error("Error fetching book details:", error);
                             showErrorPopup("Failed to fetch book details.");
-                        });
-
-                        if (hasExchanged) break;
+                        }
                     }
-                }
+                });
 
-                if (!hasExchanged) {
-                    showErrorPopup("You can only review books you have exchanged.");
-                }
+                Promise.all(exchangePromises).then(() => {
+                    if (!hasExchanged) {
+                        showErrorPopup("You can only review books you have exchanged.");
+                    }
+                });
             } else {
                 showErrorPopup("No exchange records found.");
             }
@@ -782,6 +780,7 @@ window.submitReview = function (bookId) {
         showErrorPopup("Failed to retrieve user information.");
     });
 };
+
 
 
 window.submitReviewToDatabase = function(bookId, reviewRating, reviewText) {

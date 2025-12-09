@@ -101,6 +101,10 @@ loginForm.addEventListener('submit', (e) => {
       const user = userCredential.user;
       const userId = user.uid;
 
+        // ✅ Save login timestamp here
+        const today = new Date().toISOString().slice(0, 10); // e.g., "2025-03-30"
+        set(ref(database, `logins/${user.uid}/${today}`), true);
+
       if (rememberMe) {
         localStorage.setItem('rememberedEmail', email);
         localStorage.setItem('rememberedPassword', password);
